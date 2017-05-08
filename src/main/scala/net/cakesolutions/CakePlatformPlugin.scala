@@ -130,7 +130,7 @@ object CakePlatformKeys {
       Seq(
         // janino 3.0.6 is not compatible and causes http://www.slf4j.org/codes.html#replay
         "org.codehaus.janino" % "janino" % "2.7.8" % config,
-        "org.scalatest" %% "scalatest" % "3.0.1" % config,
+        "org.scalatest" %% "scalatest" % "3.0.2" % config,
         "org.scalacheck" %% "scalacheck" % "1.13.5" % config
       ) ++ logback.map(_ % config)
   }

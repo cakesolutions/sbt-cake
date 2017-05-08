@@ -1,9 +1,8 @@
 // Copyright: 2017 https://github.com/cakesolutions/sbt-cake/graphs
 // License: http://www.apache.org/licenses/LICENSE-2.0
-package net.cakesolutions
+package org.scalafmt.sbt
 
 import org.scalafmt.bootstrap.ScalafmtBootstrap
-import org.scalafmt.sbt.ScalafmtPlugin
 import sbt._
 import sbt.Keys._
 import sbt.inc.Analysis

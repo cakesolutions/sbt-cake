@@ -1,1 +1,4 @@
 > updateClassifiers
+-> scalafmtTest
+> scalafmt -i
+> scalafmtTest
