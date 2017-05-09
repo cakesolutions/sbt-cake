@@ -87,7 +87,8 @@ object CakeBuildPlugin extends AutoPlugin {
     ),
     coverageMinimum := 80,
     coverageFailOnMinimum := true,
-    coverageExcludedFiles := ".*/target/.*"
+    coverageExcludedFiles := ".*/target/.*",
+    coverageExcludedPackages := "controllers.javascript*;controllers.ref*;router*"
   ) ++ inConfig(Test)(sensibleTestSettings) ++ inConfig(Compile)(
       sensibleCrossPath
     )
