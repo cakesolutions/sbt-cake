@@ -40,16 +40,8 @@ object CakeBuildPlugin extends AutoPlugin {
     cancelable := true,
     sourcesInBase := false,
     javaOptions += s"-Dcake.sbt.root=${(baseDirectory in ThisBuild).value.getCanonicalFile}",
-    // WORKAROUND https://github.com/dwijnand/sbt-dynver/issues/23
-    version := {
-      val v = version.value
-      if (!v.contains("+")) v
-      else
-        v.replaceAll("-alpha0.*", "")
-          // WORKAROUND the docker plugin chokes on the '+' char
-          .replaceAll("\\+", "-") + "-SNAPSHOT"
-    },
-    isSnapshot := version.value.contains("SNAP"),
+    // WORKAROUND DockerPlugin doesn't like '+'
+    version := version.value.replace('+', '-'),
     concurrentRestrictions := {
       val limited = Properties.envOrElse("SBT_TASK_LIMIT", "4").toInt
       Seq(Tags.limitAll(limited))
