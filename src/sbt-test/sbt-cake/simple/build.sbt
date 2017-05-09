@@ -5,14 +5,15 @@ val logging = project
 
 val engine = project
   .enablePlay
-  .enablePlugins(BuildInfoPlugin, DockerPlugin, AshScriptPlugin)
+  .enablePlugins(DockerPlugin, AshScriptPlugin)
   .settings(
     pipelineStages := Seq(digest, gzip)
   )
   .dependsOn(logging)
 
 val performance = project
-  .enablePlugins(BuildInfoPlugin, DockerPlugin, AshScriptPlugin)
+  .enableIntegrationTests
+  .enablePlugins(DockerPlugin, AshScriptPlugin)
   .settings(
     libraryDependencies ++= deps.Gatling
   )

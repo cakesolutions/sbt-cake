@@ -96,6 +96,12 @@ object CakeBuildPlugin extends AutoPlugin {
 }
 
 object CakeBuildKeys {
+  implicit class IntegrationTestOps(p: Project) {
+    def enableIntegrationTests: Project = p
+      .configs(IntegrationTest)
+      .settings(inConfig(IntegrationTest)(Defaults.testSettings ++ sensibleTestSettings))
+  }
+
   // WORKAROUND https://github.com/sbt/sbt/issues/2534
   // don't forget to also call testLibs
   def sensibleTestSettings = sensibleCrossPath ++ Seq(
