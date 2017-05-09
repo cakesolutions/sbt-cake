@@ -22,7 +22,7 @@ object CakeDockerPlugin extends AutoPlugin {
     dockerBaseImage := "openjdk:8-jre-alpine",
     dockerUpdateLatest := true,
     dockerRepository := None,
-    packageName in Docker := s"${(name in ThisBuild).value}-${name.value}",
+    packageName in Docker := name.value,
     maintainer in Docker := "Cake Solutions <devops@cakesolutions.net>",
     version in Docker := sys.props.get("tag").getOrElse(version.value)
   )
