@@ -1,4 +1,9 @@
 > updateClassifiers
 -> scalafmtTest
+
+# should auto-reformat https://github.com/cakesolutions/sbt-cake/issues/2
+> compile
+# WORKAROUND run `scalafmt -i` manually
 > scalafmt -i
+
 > scalafmtTest
