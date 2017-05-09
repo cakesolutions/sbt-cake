@@ -7,6 +7,7 @@ package net.cakesolutions
 import sbt._
 import sbt.Keys._
 import play.core.PlayVersion
+import wartremover._
 
 object CakePlatformKeys {
 
@@ -148,6 +149,8 @@ object CakePlatformKeys {
         .settings(
           // false positives in generated code
           scalacOptions -= "-Ywarn-unused-import",
+          // lots of warts in generated code
+          wartremoverExcluded in Compile ++= routes.RoutesKeys.routes.in(Compile).value,
           PlayKeys.playMonitoredFiles ++= (sourceDirectories in (Compile, TwirlKeys.compileTemplates)).value
         )
   }

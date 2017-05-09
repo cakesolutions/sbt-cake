@@ -12,6 +12,8 @@ import sbt._
 import sbt.IO._
 import sbt.Keys._
 
+import wartremover._
+
 /**
  * Adds coding standards to every build, e.g. linting, formatting.
  */
@@ -59,7 +61,13 @@ object CakeStandardsPlugin extends AutoPlugin {
         else Nil
       },
     // some of those flags are not supported in doc
-    javacOptions in doc ~= (_.filterNot(_.startsWith("-Xlint")))
+    javacOptions in doc ~= (_.filterNot(_.startsWith("-Xlint"))),
+
+    // http://www.wartremover.org
+    wartremoverExcluded in Compile ++= (managedSources in Compile).value,
+    wartremoverErrors ++= Warts.unsafe,
+    // https://github.com/HairyFotr/linter#enablingdisabling-checks
+    addCompilerPlugin("org.psywerx.hairyfotr" %% "linter" % "0.1.17")
   )
 
 }
