@@ -172,11 +172,6 @@ object CakePlatformPlugin extends AutoPlugin {
     ),
     // trust me, you don't ever want to get your stdlib versions out of sync...
     dependencyOverrides ++= Set(
-      // scala-lang is always used during transitive ivy resolution (and potentially thrown out...)
-      "org.scala-lang" % "scala-compiler" % scalaVersion.value,
-      "org.scala-lang" % "scala-library" % scalaVersion.value,
-      "org.scala-lang" % "scala-reflect" % scalaVersion.value,
-      "org.scala-lang" % "scalap" % scalaVersion.value,
       // user may have a different scala provider...
       scalaOrganization.value % "scala-compiler" % scalaVersion.value,
       scalaOrganization.value % "scala-library" % scalaVersion.value,
