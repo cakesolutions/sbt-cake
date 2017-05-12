@@ -41,8 +41,8 @@ object CakeStandardsPlugin extends AutoPlugin {
       "-Xfuture"
     ) ++ {
         CrossVersion.partialVersion(scalaVersion.value) match {
-          case Some((2, 12)) => Seq("-Ywarn-unused-import")
-          case Some((2, 11)) => Seq("-Yinline-warnings", "-Ywarn-unused-import")
+          case Some((2, 12)) => Seq("-Ywarn-unused-import", "-Ypartial-unification")
+          case Some((2, 11)) => Seq("-Yinline-warnings", "-Ywarn-unused-import", "-Ypartial-unification")
           case Some((2, 10)) => Seq("-Yinline-warnings")
           case _             => Nil
         }
