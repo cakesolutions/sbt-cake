@@ -65,9 +65,11 @@ object CakeStandardsPlugin extends AutoPlugin {
 
     // http://www.wartremover.org
     wartremoverExcluded in Compile ++= (managedSources in Compile).value,
-    wartremoverWarnings ++= Warts.unsafe,
-    // https://github.com/HairyFotr/linter#enablingdisabling-checks
-    addCompilerPlugin("org.psywerx.hairyfotr" %% "linter" % "0.1.17")
+    wartremoverWarnings in (Compile, compile) :=
+      Warts.unsafe ++ Seq(
+        Wart.FinalCaseClass,
+        Wart.ExplicitImplicitTypes
+      )
   )
 
 }
