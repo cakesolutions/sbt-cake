@@ -12,6 +12,7 @@ import sbt._
 import sbt.IO._
 import sbt.Keys._
 
+import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport._
 import scoverage.ScoverageKeys._
 
 /**
@@ -99,7 +100,7 @@ object CakeBuildKeys {
   implicit class IntegrationTestOps(p: Project) {
     def enableIntegrationTests: Project = p
       .configs(IntegrationTest)
-      .settings(inConfig(IntegrationTest)(Defaults.testSettings ++ sensibleTestSettings))
+      .settings(inConfig(IntegrationTest)(Defaults.testSettings ++ sensibleTestSettings ++ scalafmtSettings))
   }
 
   // WORKAROUND https://github.com/sbt/sbt/issues/2534

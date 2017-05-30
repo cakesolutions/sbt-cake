@@ -12,6 +12,8 @@ import sbt._
 import sbt.IO._
 import sbt.Keys._
 
+import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin
+import ScalafmtCorePlugin.autoImport._
 import wartremover._
 
 /**
@@ -24,9 +26,10 @@ object CakeStandardsPlugin extends AutoPlugin {
   val autoImport = CakeStandardsKeys
   import autoImport._
 
-  override val buildSettings = Seq()
+  // WORKAROUND https://github.com/lucidsoftware/neo-sbt-scalafmt/issues/5
+  override val buildSettings = ScalafmtCorePlugin.buildSettings
 
-  override val projectSettings = Seq(
+  override val projectSettings = ScalafmtCorePlugin.projectSettings ++ Seq(Compile, Test).flatMap(inConfig(_)(scalafmtSettings)) ++ Seq(
     scalacOptions ++= Seq(
       "-encoding",
       "UTF-8",
@@ -62,7 +65,6 @@ object CakeStandardsPlugin extends AutoPlugin {
       },
     // some of those flags are not supported in doc
     javacOptions in doc ~= (_.filterNot(_.startsWith("-Xlint"))),
-
     // http://www.wartremover.org
     wartremoverExcluded in Compile ++= (managedSources in Compile).value,
     wartremoverWarnings in (Compile, compile) :=
