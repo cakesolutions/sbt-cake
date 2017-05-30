@@ -63,7 +63,7 @@ object AutomateScalafmtPlugin extends AutoPlugin {
                   ScalafmtBootstrap.main(List("--quiet", "-i", "-f", filesArg))
                 }
               format(formattingHandler, "Formatting")
-              format(_ => (), "Reformatted") // Recalculate the cache
+              val _ = format(_ => (), "Reformatted") // Recalculate the cache
             }
           )
         )
