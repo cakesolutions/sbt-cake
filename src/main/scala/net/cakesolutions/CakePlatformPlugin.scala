@@ -20,7 +20,7 @@ object CakePlatformKeys {
    * and force you to update your build.sbt
    */
   object versions {
-    val akka = "2.4.17"
+    val akka = "2.4.18"
     val play = PlayVersion.current
   }
 
@@ -131,7 +131,7 @@ object CakePlatformKeys {
       Seq(
         // janino 3.0.6 is not compatible and causes http://www.slf4j.org/codes.html#replay
         "org.codehaus.janino" % "janino" % "2.7.8" % config,
-        "org.scalatest" %% "scalatest" % "3.0.2" % config,
+        "org.scalatest" %% "scalatest" % "3.0.3" % config,
         "org.scalacheck" %% "scalacheck" % "1.13.5" % config
       ) ++ logback.map(_ % config)
   }
