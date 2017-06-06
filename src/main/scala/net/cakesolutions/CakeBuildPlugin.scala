@@ -8,18 +8,16 @@ import java.util.concurrent.atomic.AtomicLong
 
 import scala.util._
 
-import sbt._
-import sbt.IO._
-import sbt.Keys._
-
 import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport._
+import sbt.Keys._
+import sbt._
 import scoverage.ScoverageKeys._
 
 /**
- * Common plugin that sets up common variables and build settings such
- * as: handling build-related environment variables, java runtime
- * flags, parallelisation of tests, registering our repositories.
- */
+  * Common plugin that sets up common variables and build settings such
+  * as: handling build-related environment variables, java runtime
+  * flags, parallelisation of tests, registering our repositories.
+  */
 object CakeBuildPlugin extends AutoPlugin {
   override def requires = sbtdynver.DynVerPlugin
   override def trigger = allRequirements
@@ -91,8 +89,8 @@ object CakeBuildPlugin extends AutoPlugin {
     coverageExcludedFiles := ".*/target/.*",
     coverageExcludedPackages := "controllers.javascript*;controllers.ref*;router*"
   ) ++ inConfig(Test)(sensibleTestSettings) ++ inConfig(Compile)(
-      sensibleCrossPath
-    )
+    sensibleCrossPath
+  )
 
 }
 
