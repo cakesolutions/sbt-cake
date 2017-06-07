@@ -1,25 +1,29 @@
 // Copyright: 2017 https://github.com/cakesolutions/sbt-cake/graphs
 // License: http://www.apache.org/licenses/LICENSE-2.0
+
 package net.cakesolutions
 
-import java.time.format.DateTimeFormatter
 import java.time.{Clock, ZonedDateTime}
+import java.time.format.DateTimeFormatter
 
 import scala.util._
 
-import sbt.Keys._
 import sbt._
+import sbt.Keys._
 import sbtbuildinfo.BuildInfoPlugin
 import sbtbuildinfo.BuildInfoPlugin.autoImport._
 
 /**
-  * Assumes that `git` is installed. Used to configure and load the `BuildInfo` object at runtime. This
-  * object contains information regarding the build such as the git commit hash, etc.
+  * Assumes that `git` is installed. Used to configure and load the `BuildInfo`
+  * object at runtime. This object contains information regarding the build
+  * such as the git commit hash, etc.
   *
-  * Configuration of this plugin should be avoided in local project SBT build files.
+  * Configuration of this plugin should be avoided in local project SBT build
+  * files.
   */
 object CakeBuildInfoPlugin extends AutoPlugin {
-  // TODO: CO-72: Ensure tasks that shell out are resilient to non-existent binaries
+  // TODO: CO-72: Ensure tasks that shell out are resilient to non-existent
+  // binaries
 
   /**
     * When this plugin is enabled, {{autoImport}} defines a wildcard import for
@@ -70,9 +74,7 @@ object CakeBuildInfoPlugin extends AutoPlugin {
         "docker --version" ->
           "`docker` command should be installed and PATH accessible"
       )
-      Map(
-        "buildDockerVersion" -> buildDockerVersion
-      )
+      Map("buildDockerVersion" -> buildDockerVersion)
     },
     checkExternalBuildTools := {
       externalBuildTools.value.foreach {
@@ -108,6 +110,7 @@ object CakeBuildInfoPlugin extends AutoPlugin {
   * Build keys that will be auto-imported when this plugin is enabled.
   */
 object CakeBuildInfoKeys {
+
   /**
     * Map holding generic set of labelled values. These are use to label jar
     * manifests and Docker containers.

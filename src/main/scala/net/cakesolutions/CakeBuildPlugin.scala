@@ -1,24 +1,26 @@
 // Copyright: 2017 https://github.com/cakesolutions/sbt-cake/graphs
 // License: http://www.apache.org/licenses/LICENSE-2.0
-package net.cakesolutions
+
 // Copyright 2015 - 2016 Sam Halliday (derived from sbt-sensible)
 // License: http://www.apache.org/licenses/LICENSE-2.0
+package net.cakesolutions
 
 import java.util.concurrent.atomic.AtomicLong
 
-import scala.util._
-
 import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport._
-import sbt.Keys._
 import sbt._
+import sbt.Keys._
 import scoverage.ScoverageKeys._
 
 /**
-  * Common plugin that sets up common variables and build settings such
-  * as: handling build-related environment variables, java runtime
-  * flags, parallelisation of tests, registering our repositories.
+  * Common plugin that sets up common variables and build settings such as:
+  * - handling build-related environment variables
+  * - java runtime flags
+  * - parallelisation of tests
+  * - registering our repositories.
   */
 object CakeBuildPlugin extends AutoPlugin {
+
   /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
   override def requires: Plugins = sbtdynver.DynVerPlugin
 
@@ -26,7 +28,8 @@ object CakeBuildPlugin extends AutoPlugin {
   override def trigger: PluginTrigger = allRequirements
 
   /**
-    * When this plugin is enabled, {{autoImport}} defines a wildcard import for set, eval, and .sbt files.
+    * When this plugin is enabled, {{autoImport}} defines a wildcard import for
+    * set, eval, and .sbt files.
     */
   val autoImport = CakeBuildKeys
   import autoImport._
@@ -45,7 +48,8 @@ object CakeBuildPlugin extends AutoPlugin {
     fork := true,
     cancelable := true,
     sourcesInBase := false,
-    javaOptions += s"-Dcake.sbt.root=${(baseDirectory in ThisBuild).value.getCanonicalFile}",
+    javaOptions +=
+      s"-Dcake.sbt.root=${(baseDirectory in ThisBuild).value.getCanonicalFile}",
     // WORKAROUND DockerPlugin doesn't like '+'
     version := version.value.replace('+', '-'),
     concurrentRestrictions := {
@@ -83,10 +87,13 @@ object CakeBuildPlugin extends AutoPlugin {
     },
     javaOptions += s"-Dcake.sbt.name=${name.value}",
     // prefer a per-application logback.xml in resources
-    // javaOptions in Compile += s"-Dlogback.configurationFile=${(baseDirectory in ThisBuild).value}/logback-main.xml",
+    // javaOptions in Compile +=
+    //   "-Dlogback.configurationFile=" +
+    //     s"${(baseDirectory in ThisBuild).value}/logback-main.xml",
     javaOptions ++= JavaSpecificFlags ++ Seq("-Xss2m", "-Dfile.encoding=UTF8"),
     dependencyOverrides ++= Set(
-      // scala-lang is always used during transitive ivy resolution (and potentially thrown out...)
+      // scala-lang is always used during transitive ivy resolution (and
+      // potentially thrown out...)
       "org.scala-lang" % "scala-compiler" % scalaVersion.value,
       "org.scala-lang" % "scala-library" % scalaVersion.value,
       "org.scala-lang" % "scala-reflect" % scalaVersion.value,
@@ -100,7 +107,8 @@ object CakeBuildPlugin extends AutoPlugin {
     coverageMinimum := 80,
     coverageFailOnMinimum := true,
     coverageExcludedFiles := ".*/target/.*",
-    coverageExcludedPackages := "controllers.javascript*;controllers.ref*;router*"
+    coverageExcludedPackages :=
+      "controllers.javascript*;controllers.ref*;router*"
   ) ++
     inConfig(Test)(sensibleTestSettings) ++
     inConfig(Compile)(sensibleCrossPath)
@@ -110,20 +118,26 @@ object CakeBuildPlugin extends AutoPlugin {
   * Build keys that will be auto-imported when this plugin is enabled.
   */
 object CakeBuildKeys {
+
   /**
     * Implicitly add extra methods to in scope Projects
     *
     * @param p project on which to apply integration test settings
     */
   implicit class IntegrationTestOps(p: Project) {
+
     /**
       * Enable integration test configuration and a default set of settings.
       *
       * @return Project with integration test settings and configuration applied
       */
-    def enableIntegrationTests: Project = p
-      .configs(IntegrationTest)
-      .settings(inConfig(IntegrationTest)(Defaults.testSettings ++ sensibleTestSettings ++ scalafmtSettings))
+    def enableIntegrationTests: Project =
+      p.configs(IntegrationTest)
+        .settings(
+          inConfig(IntegrationTest)(
+            Defaults.testSettings ++ sensibleTestSettings ++ scalafmtSettings
+          )
+        )
   }
 
   /**
@@ -135,50 +149,56 @@ object CakeBuildKeys {
   // don't forget to also call testLibs
   def sensibleTestSettings: Seq[Def.Setting[_]] =
     sensibleCrossPath ++
-    Seq(
-      parallelExecution := true,
-      javaOptions ~= (_.filterNot(_.startsWith("-Dlogback.configurationFile"))),
-      javaOptions +=
-        s"-Dlogback.configurationFile=${(baseDirectory in ThisBuild).value}/logback-${configuration.value}.xml",
-      testForkedParallel := true,
-      testGrouping := {
-        val opts = ForkOptions(
-          bootJars = Nil,
-          javaHome = javaHome.value,
-          connectInput = connectInput.value,
-          outputStrategy = outputStrategy.value,
-          runJVMOptions = javaOptions.value,
-          workingDirectory = Some(baseDirectory.value),
-          envVars = envVars.value
-        )
-        definedTests.value.map { test =>
-          Tests.Group(test.name, Seq(test), Tests.SubProcess(opts))
-        }
-      },
-      javaOptions ++= {
-        if (sys.env.get("GC_LOGGING").isEmpty) {
-          Nil
-        } else {
-          val base = (baseDirectory in ThisBuild).value
+      Seq(
+        parallelExecution := true,
+        javaOptions ~= (_.filterNot(
+          _.startsWith("-Dlogback.configurationFile")
+        )),
+        javaOptions += {
+          val baseDir = (baseDirectory in ThisBuild).value
           val config = configuration.value
-          val n = name.value
-          val count = forkCount.incrementAndGet() // subject to task evaluation
-          val out = { base / s"gc-$config-$n.log" }.getCanonicalPath
-          Seq(
-            // https://github.com/fommil/lions-share
-            s"-Xloggc:$out",
-            "-XX:+PrintGCDetails",
-            "-XX:+PrintGCDateStamps",
-            "-XX:+PrintTenuringDistribution",
-            "-XX:+PrintHeapAtGC"
+          s"-Dlogback.configurationFile=$baseDir/logback-$config.xml"
+        },
+        testForkedParallel := true,
+        testGrouping := {
+          val opts = ForkOptions(
+            bootJars = Nil,
+            javaHome = javaHome.value,
+            connectInput = connectInput.value,
+            outputStrategy = outputStrategy.value,
+            runJVMOptions = javaOptions.value,
+            workingDirectory = Some(baseDirectory.value),
+            envVars = envVars.value
           )
-        }
-      },
-      // and don't forget `export SCALACTIC_FILE_PATHNAMES=true`
-      testOptions += Tests
-        .Argument(TestFrameworks.ScalaTest, "-oFD", "-W", "120", "60"),
-      testFrameworks := Seq(TestFrameworks.ScalaTest, TestFrameworks.JUnit)
-    )
+          definedTests.value.map { test =>
+            Tests.Group(test.name, Seq(test), Tests.SubProcess(opts))
+          }
+        },
+        javaOptions ++= {
+          if (sys.env.get("GC_LOGGING").isEmpty) {
+            Nil
+          } else {
+            val base = (baseDirectory in ThisBuild).value
+            val config = configuration.value
+            val n = name.value
+            // subject to task evaluation
+            val count = forkCount.incrementAndGet()
+            val out = { base / s"gc-$config-$n.log" }.getCanonicalPath
+            Seq(
+              // https://github.com/fommil/lions-share
+              s"-Xloggc:$out",
+              "-XX:+PrintGCDetails",
+              "-XX:+PrintGCDateStamps",
+              "-XX:+PrintTenuringDistribution",
+              "-XX:+PrintHeapAtGC"
+            )
+          }
+        },
+        // and don't forget `export SCALACTIC_FILE_PATHNAMES=true`
+        testOptions += Tests
+          .Argument(TestFrameworks.ScalaTest, "-oFD", "-W", "120", "60"),
+        testFrameworks := Seq(TestFrameworks.ScalaTest, TestFrameworks.JUnit)
+      )
 
   // used for unique gclog naming
   private[this] val forkCount = new AtomicLong()

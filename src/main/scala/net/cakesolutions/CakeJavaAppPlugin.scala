@@ -1,9 +1,10 @@
 // Copyright: 2017 https://github.com/cakesolutions/sbt-cake/graphs
 // License: http://www.apache.org/licenses/LICENSE-2.0
+
 package net.cakesolutions
 
-import sbt.Keys._
 import sbt._
+import sbt.Keys._
 
 /**
   * Cake recommended settings for Java application packaging.
@@ -25,9 +26,10 @@ object CakeJavaAppPlugin extends AutoPlugin {
     mappings in Universal ++= {
       val jar = (packageBin in Compile).value // forces compile
       val src = sourceDirectory.value
-      packageMapping(
-        (src / "main" / "resources") -> "conf"
-      ).withContents().mappings.toSeq
+      packageMapping((src / "main" / "resources") -> "conf")
+        .withContents()
+        .mappings
+        .toSeq
     }
   )
 }

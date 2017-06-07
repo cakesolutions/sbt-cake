@@ -17,6 +17,16 @@ pipeline {
       }
     }
 
+    stage('Verification') {
+      steps {
+        ansiColor('xterm') {
+          // TODO: CO-77: add in scalafmt::test target
+          // sh "sbt ';headerCheck ;scalastyle ;scalafmt'"
+          sh "sbt ';headerCheck ;scalastyle'"
+        }
+      }
+    }
+
     stage('Test') {
       steps {
         ansiColor('xterm') {

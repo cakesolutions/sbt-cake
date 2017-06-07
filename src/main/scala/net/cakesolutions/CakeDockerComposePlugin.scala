@@ -1,18 +1,20 @@
 // Copyright: 2017 https://github.com/cakesolutions/sbt-cake/graphs
 // License: http://www.apache.org/licenses/LICENSE-2.0
+
 package net.cakesolutions
 
 import com.typesafe.sbt.SbtNativePackager._
 import com.typesafe.sbt.packager.Keys._
-import sbt.Keys._
 import sbt._
+import sbt.Keys._
 
 /**
   * Cake recommended tasks for configuring and using docker-compose within SBT
   * build files (e.g. for use within integration tests, etc.)
   */
 object CakeDockerComposePlugin extends AutoPlugin {
-  // TODO: CO-72: Ensure tasks that shell out are resilient to non-existent binaries
+  // TODO: CO-72: Ensure tasks that shell out are resilient to non-existent
+  // binaries
 
   /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
   override def requires: Plugins = CakeDockerPlugin
@@ -21,7 +23,8 @@ object CakeDockerComposePlugin extends AutoPlugin {
   override def trigger: PluginTrigger = allRequirements
 
   /**
-    * When this plugin is enabled, {{autoImport}} defines a wildcard import for set, eval, and .sbt files.
+    * When this plugin is enabled, {{autoImport}} defines a wildcard import for
+    * set, eval, and .sbt files.
     */
   val autoImport = CakeDockerComposePluginKeys
   import autoImport._
@@ -76,7 +79,8 @@ object CakeDockerComposePlugin extends AutoPlugin {
     // in publishLocal, but it gets picked up there, so we only pass
     // the envvar when doing the final publish.
     dockerRepository :=
-      sys.env.get("DOCKER_REPOSITORY")
+      sys.env
+        .get("DOCKER_REPOSITORY")
         .orElse(Some((name in ThisBuild).value)),
     dockerComposeFile := file(s"docker/${name.value}.yml"),
     dockerComposeImageTask := (publishLocal in Docker).value,
@@ -90,6 +94,7 @@ object CakeDockerComposePlugin extends AutoPlugin {
   * SBT docker-compose build settings and tasks
   */
 object CakeDockerComposePluginKeys {
+
   /**
     * Setting key defining the file to be used by docker-compose commands
     */

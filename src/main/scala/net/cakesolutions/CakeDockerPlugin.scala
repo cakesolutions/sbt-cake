@@ -1,13 +1,14 @@
 // Copyright: 2017 https://github.com/cakesolutions/sbt-cake/graphs
 // License: http://www.apache.org/licenses/LICENSE-2.0
+
 package net.cakesolutions
 
-import sbt.Keys._
 import sbt._
+import sbt.Keys._
 
 /**
-  * Cake recommended settings for configuring linter and wartremover, along with a standard suite of compiler
-  * compatibility flags
+  * Cake recommended settings for configuring linter and wartremover, along
+  * with a standard suite of compiler compatibility flags.
   */
 object CakeDockerPlugin extends AutoPlugin {
   import com.typesafe.sbt.SbtNativePackager._
@@ -30,7 +31,8 @@ object CakeDockerPlugin extends AutoPlugin {
     version in Docker := sys.props.get("tag").getOrElse(version.value),
     dockerCommands += {
       val dockerArgList =
-        CakeBuildInfoKeys.generalInfo.value ++ CakeBuildInfoKeys.dockerInfo.value
+        CakeBuildInfoKeys.generalInfo.value ++
+          CakeBuildInfoKeys.dockerInfo.value
       val labelArguments =
         dockerArgList
           .map {
