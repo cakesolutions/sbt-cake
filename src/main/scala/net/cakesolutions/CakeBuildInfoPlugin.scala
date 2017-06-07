@@ -12,8 +12,15 @@ import sbt._
 import sbtbuildinfo.BuildInfoPlugin
 import sbtbuildinfo.BuildInfoPlugin.autoImport._
 
-// kicks in if the Project uses the BuildInfoPlugin
+/**
+  * Assumes that `git` is installed. Used to configure and load the `BuildInfo` object at runtime. This
+  * object contains information regarding the build such as the git commit hash, etc.
+  *
+  * Configuration of this plugin should be avoided in local project SBT build files.
+  */
 object CakeBuildInfoPlugin extends AutoPlugin {
+  // TODO: CO-72: Ensure tasks that shell out are resilient to non-existent binaries
+
   /**
     * When this plugin is enabled, {{autoImport}} defines a wildcard import for
     * set, eval, and .sbt files.
@@ -21,9 +28,13 @@ object CakeBuildInfoPlugin extends AutoPlugin {
   val autoImport = CakeBuildInfoKeys
   import autoImport._
 
-  override def requires = BuildInfoPlugin
-  override def trigger = allRequirements
+  /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
+  override def requires: Plugins = BuildInfoPlugin
 
+  /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
+  override def trigger: PluginTrigger = allRequirements
+
+  /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
   override val projectSettings = Seq(
     buildInfoKeys := Seq[BuildInfoKey](
       name in ThisBuild,

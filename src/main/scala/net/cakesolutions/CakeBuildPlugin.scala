@@ -19,19 +19,26 @@ import scoverage.ScoverageKeys._
   * flags, parallelisation of tests, registering our repositories.
   */
 object CakeBuildPlugin extends AutoPlugin {
-  override def requires = sbtdynver.DynVerPlugin
-  override def trigger = allRequirements
+  /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
+  override def requires: Plugins = sbtdynver.DynVerPlugin
 
+  /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
+  override def trigger: PluginTrigger = allRequirements
+
+  /**
+    * When this plugin is enabled, {{autoImport}} defines a wildcard import for set, eval, and .sbt files.
+    */
   val autoImport = CakeBuildKeys
   import autoImport._
 
   private val JavaSpecificFlags =
     sys.props("java.version").substring(0, 3) match {
       case "1.6" | "1.7" => List("-XX:MaxPermSize=256m")
-      case _             => List("-XX:MaxMetaspaceSize=256m")
+      case _ => List("-XX:MaxMetaspaceSize=256m")
     }
 
-  override val buildSettings = Seq(
+  /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
+  override val buildSettings: Seq[Setting[_]] = Seq(
     organization := "net.cakesolutions",
     scalaVersion := "2.11.11",
     maxErrors := 1,
@@ -42,16 +49,20 @@ object CakeBuildPlugin extends AutoPlugin {
     // WORKAROUND DockerPlugin doesn't like '+'
     version := version.value.replace('+', '-'),
     concurrentRestrictions := {
-      val limited = Properties.envOrElse("SBT_TASK_LIMIT", "4").toInt
+      // TODO: CO-72: Ensure a more meaningful error message is generated here
+      val limited = sys.env.get("SBT_TASK_LIMIT").map(_.toInt).getOrElse(4)
       Seq(Tags.limitAll(limited))
     }
   )
 
-  override val projectSettings = Seq(
+  /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
+  override val projectSettings: Seq[Setting[_]] = Seq(
     resolvers += Resolver.bintrayRepo("cakesolutions", "maven"),
     ivyLoggingLevel := UpdateLogging.Quiet,
     conflictManager := ConflictManager.strict,
-    // makes it really easy to use a RAM disk
+    // makes it really easy to use a RAM disk - when the environment variable
+    // exists, the SBT_VOLATILE_TARGET/target directory is created as a side
+    // effect
     target := {
       sys.env.get("SBT_VOLATILE_TARGET") match {
         case None => target.value
@@ -59,6 +70,8 @@ object CakeBuildPlugin extends AutoPlugin {
           file(base) / target.value.getCanonicalPath.replace(':', '_')
       }
     },
+    // When the environment variable exists, the
+    // SBT_VOLATILE_TARGET/java.io.tmpdir directory is created as a side effect
     javaOptions ++= {
       sys.env.get("SBT_VOLATILE_TARGET") match {
         case None => Nil
@@ -88,63 +101,84 @@ object CakeBuildPlugin extends AutoPlugin {
     coverageFailOnMinimum := true,
     coverageExcludedFiles := ".*/target/.*",
     coverageExcludedPackages := "controllers.javascript*;controllers.ref*;router*"
-  ) ++ inConfig(Test)(sensibleTestSettings) ++ inConfig(Compile)(
-    sensibleCrossPath
-  )
-
+  ) ++
+    inConfig(Test)(sensibleTestSettings) ++
+    inConfig(Compile)(sensibleCrossPath)
 }
 
+/**
+  * Build keys that will be auto-imported when this plugin is enabled.
+  */
 object CakeBuildKeys {
+  /**
+    * Implicitly add extra methods to in scope Projects
+    *
+    * @param p project on which to apply integration test settings
+    */
   implicit class IntegrationTestOps(p: Project) {
+    /**
+      * Enable integration test configuration and a default set of settings.
+      *
+      * @return Project with integration test settings and configuration applied
+      */
     def enableIntegrationTests: Project = p
       .configs(IntegrationTest)
       .settings(inConfig(IntegrationTest)(Defaults.testSettings ++ sensibleTestSettings ++ scalafmtSettings))
   }
 
+  /**
+    * SBT project settings for configuring testing.
+    *
+    * @return Cake recommended test settings
+    */
   // WORKAROUND https://github.com/sbt/sbt/issues/2534
   // don't forget to also call testLibs
-  def sensibleTestSettings = sensibleCrossPath ++ Seq(
-    parallelExecution := true,
-    javaOptions ~= (_.filterNot(_.startsWith("-Dlogback.configurationFile"))),
-    javaOptions += s"-Dlogback.configurationFile=${(baseDirectory in ThisBuild).value}/logback-${configuration.value}.xml",
-    testForkedParallel := true,
-    testGrouping := {
-      val opts = ForkOptions(
-        bootJars = Nil,
-        javaHome = javaHome.value,
-        connectInput = connectInput.value,
-        outputStrategy = outputStrategy.value,
-        runJVMOptions = javaOptions.value,
-        workingDirectory = Some(baseDirectory.value),
-        envVars = envVars.value
-      )
-      definedTests.value.map { test =>
-        Tests.Group(test.name, Seq(test), Tests.SubProcess(opts))
-      }
-    },
-    javaOptions ++= {
-      if (sys.env.get("GC_LOGGING").isEmpty) Nil
-      else {
-        val base = (baseDirectory in ThisBuild).value
-        val config = configuration.value
-        val n = name.value
-        val count = forkCount.incrementAndGet() // subject to task evaluation
-        val out = { base / s"gc-$config-$n.log" }.getCanonicalPath
-        Seq(
-          // https://github.com/fommil/lions-share
-          s"-Xloggc:$out",
-          "-XX:+PrintGCDetails",
-          "-XX:+PrintGCDateStamps",
-          "-XX:+PrintTenuringDistribution",
-          "-XX:+PrintHeapAtGC"
+  def sensibleTestSettings: Seq[Def.Setting[_]] =
+    sensibleCrossPath ++
+    Seq(
+      parallelExecution := true,
+      javaOptions ~= (_.filterNot(_.startsWith("-Dlogback.configurationFile"))),
+      javaOptions +=
+        s"-Dlogback.configurationFile=${(baseDirectory in ThisBuild).value}/logback-${configuration.value}.xml",
+      testForkedParallel := true,
+      testGrouping := {
+        val opts = ForkOptions(
+          bootJars = Nil,
+          javaHome = javaHome.value,
+          connectInput = connectInput.value,
+          outputStrategy = outputStrategy.value,
+          runJVMOptions = javaOptions.value,
+          workingDirectory = Some(baseDirectory.value),
+          envVars = envVars.value
         )
-      }
-    },
-    // and don't forget `export SCALACTIC_FILE_PATHNAMES=true`
-    testOptions += Tests
-      .Argument(TestFrameworks.ScalaTest, "-oFD", "-W", "120", "60"),
-    testFrameworks := Seq(TestFrameworks.ScalaTest, TestFrameworks.JUnit)
-  )
+        definedTests.value.map { test =>
+          Tests.Group(test.name, Seq(test), Tests.SubProcess(opts))
+        }
+      },
+      javaOptions ++= {
+        if (sys.env.get("GC_LOGGING").isEmpty) {
+          Nil
+        } else {
+          val base = (baseDirectory in ThisBuild).value
+          val config = configuration.value
+          val n = name.value
+          val count = forkCount.incrementAndGet() // subject to task evaluation
+          val out = { base / s"gc-$config-$n.log" }.getCanonicalPath
+          Seq(
+            // https://github.com/fommil/lions-share
+            s"-Xloggc:$out",
+            "-XX:+PrintGCDetails",
+            "-XX:+PrintGCDateStamps",
+            "-XX:+PrintTenuringDistribution",
+            "-XX:+PrintHeapAtGC"
+          )
+        }
+      },
+      // and don't forget `export SCALACTIC_FILE_PATHNAMES=true`
+      testOptions += Tests
+        .Argument(TestFrameworks.ScalaTest, "-oFD", "-W", "120", "60"),
+      testFrameworks := Seq(TestFrameworks.ScalaTest, TestFrameworks.JUnit)
+    )
 
   // used for unique gclog naming
   private[this] val forkCount = new AtomicLong()
@@ -158,5 +192,4 @@ object CakeBuildKeys {
       file(s"${dir.getPath}-$major.$minor")
     }
   )
-
 }

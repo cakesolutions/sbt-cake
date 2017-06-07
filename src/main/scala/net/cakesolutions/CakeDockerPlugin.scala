@@ -5,15 +5,23 @@ package net.cakesolutions
 import sbt.Keys._
 import sbt._
 
-// only for projects that use the DockerPlugin
+/**
+  * Cake recommended settings for configuring linter and wartremover, along with a standard suite of compiler
+  * compatibility flags
+  */
 object CakeDockerPlugin extends AutoPlugin {
   import com.typesafe.sbt.SbtNativePackager._
   import com.typesafe.sbt.packager.Keys._
   import com.typesafe.sbt.packager.docker._
 
-  override def requires = CakeBuildInfoPlugin && DockerPlugin
-  override def trigger = allRequirements
-  override def projectSettings = Seq(
+  /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
+  override def requires: Plugins = CakeBuildInfoPlugin && DockerPlugin
+
+  /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
+  override def trigger: PluginTrigger = allRequirements
+
+  /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
+  override def projectSettings: Seq[Setting[_]] = Seq(
     dockerBaseImage := "openjdk:8-jre-alpine",
     dockerUpdateLatest := true,
     dockerRepository := None,

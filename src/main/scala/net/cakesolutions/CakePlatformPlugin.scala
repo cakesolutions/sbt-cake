@@ -4,13 +4,15 @@ package net.cakesolutions
 // Copyright 2015 - 2016 Sam Halliday (derived from sbt-sensible)
 // License: http://www.apache.org/licenses/LICENSE-2.0
 
-import sbt._
-import sbt.Keys._
 import play.core.PlayVersion
+import sbt.Keys._
+import sbt._
 import wartremover._
 
+/**
+  * Library dependency keys that will be auto-imported when this plugin is enabled on a project.
+  */
 object CakePlatformKeys {
-
   /**
    * Versions of platform libraries. Anything project specific can be
    * written explicitly in build.sbt and anything specific to a
@@ -136,15 +138,25 @@ object CakePlatformKeys {
       ) ++ logback.map(_ % config)
   }
 
+  /**
+    * Implicitly add extra methods to in scope Projects
+    *
+    * @param p project that Play application setting should be applied to
+    */
   implicit class PlayOps(p: Project) {
     import play.sbt._
     import PlayImport.PlayKeys
     import play.twirl.sbt.Import.TwirlKeys
 
-    // for consistency we prefer default SBT style layout
-    // https://www.playframework.com/documentation/2.5.x/Anatomy
+    /**
+      * Enable Play Scala plugin, SBT style layout and a default set of settings.
+      *
+      * @return project with Play settings and configuration applied
+      */
     def enablePlay: Project =
       p.enablePlugins(PlayScala)
+        // For consistency we prefer default SBT style layout
+        // https://www.playframework.com/documentation/2.5.x/Anatomy
         .disablePlugins(PlayLayoutPlugin)
         .settings(
           // false positives in generated code
@@ -154,19 +166,27 @@ object CakePlatformKeys {
           PlayKeys.playMonitoredFiles ++= (sourceDirectories in (Compile, TwirlKeys.compileTemplates)).value
         )
   }
-
 }
 
+/**
+  * Provides access to a standard set of core library dependency keys. All Cake projects should enable this plugin
+  * (either directly or indirectly).
+  */
 object CakePlatformPlugin extends AutoPlugin {
-  override def requires = CakeStandardsPlugin
-  override def trigger = allRequirements
+  /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
+  override def requires: Plugins = CakeStandardsPlugin
 
+  /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
+  override def trigger: PluginTrigger = allRequirements
+
+  /**
+    * When this plugin is enabled, {{autoImport}} defines a wildcard import for set, eval, and .sbt files.
+    */
   val autoImport = CakePlatformKeys
   import autoImport._
 
-  override val buildSettings = Seq()
-
-  override val projectSettings = Seq(
+  /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
+  override val projectSettings: Seq[Setting[_]] = Seq(
     dependencyOverrides ++= Set(
       "io.netty" % "netty" % "3.10.6.Final" // akka remoting only works on netty 3
     ),
@@ -196,5 +216,4 @@ object CakePlatformPlugin extends AutoPlugin {
       SbtExclusionRule("org.slf4j", "slf4j-jcl.jar")
     )
   )
-
 }
