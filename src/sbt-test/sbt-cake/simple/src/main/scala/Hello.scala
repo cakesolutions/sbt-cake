@@ -1,1 +1,1 @@
-object TerribleFormatting { def foo = "bar" }
+object TerribleFormatting{def foo=   "bar"}
