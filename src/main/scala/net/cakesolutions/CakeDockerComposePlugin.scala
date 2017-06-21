@@ -5,6 +5,7 @@ package net.cakesolutions
 
 import com.typesafe.sbt.SbtNativePackager._
 import com.typesafe.sbt.packager.Keys._
+import net.cakesolutions.CakeBuildInfoKeys.externalBuildTools
 import sbt._
 import sbt.Keys._
 
@@ -13,11 +14,9 @@ import sbt.Keys._
   * build files (e.g. for use within integration tests, etc.)
   */
 object CakeDockerComposePlugin extends AutoPlugin {
-  // TODO: CO-72: Ensure tasks that shell out are resilient to non-existent
-  // binaries
 
   /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
-  override def requires: Plugins = CakeDockerPlugin
+  override def requires: Plugins = CakeBuildInfoPlugin && CakeDockerPlugin
 
   /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
   override def trigger: PluginTrigger = allRequirements
@@ -86,7 +85,19 @@ object CakeDockerComposePlugin extends AutoPlugin {
     dockerComposeImageTask := (publishLocal in Docker).value,
     dockerComposeUp := dockerComposeUpTask.value,
     dockerComposeDown := dockerComposeDownTask.value,
-    dockerRemove := dockerRemoveTask.value
+    dockerRemove := dockerRemoveTask.value,
+    externalBuildTools ++=
+      Seq(
+        (
+          "docker version",
+          "`docker` needs to be installed, PATH accessible and able to " +
+            "contact a Docker registry"
+        ),
+        (
+          "docker-compose version",
+          "`docker-compose` needs to be installed and PATH accessible"
+        )
+      )
   )
 }
 

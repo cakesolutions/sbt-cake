@@ -91,6 +91,9 @@ The following SBT tasks are enabled:
 * `checkExternalBuildTools` - checks that all commands in `externalBuildTools` run without generating a non-zero exit
   code.
 
+In continuous integration (CI) environments, the SBT task `checkExternalBuildTools` should be ran by build scripts to
+ensure that all required build tools (e.g. `git`, `docker`, etc.) are installed.
+
 ## `CakeBuildPlugin`: Standard Build and Library Dependencies
 
 Plugin requirements: `DynVerPlugin`

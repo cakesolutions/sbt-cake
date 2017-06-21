@@ -22,8 +22,6 @@ import sbtbuildinfo.BuildInfoPlugin.autoImport._
   * files.
   */
 object CakeBuildInfoPlugin extends AutoPlugin {
-  // TODO: CO-72: Ensure tasks that shell out are resilient to non-existent
-  // binaries
 
   /**
     * When this plugin is enabled, {{autoImport}} defines a wildcard import for

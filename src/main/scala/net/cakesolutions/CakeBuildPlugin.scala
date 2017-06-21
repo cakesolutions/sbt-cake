@@ -7,6 +7,8 @@ package net.cakesolutions
 
 import java.util.concurrent.atomic.AtomicLong
 
+import scala.util._
+
 import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport._
 import sbt._
 import sbt.Keys._
@@ -53,8 +55,12 @@ object CakeBuildPlugin extends AutoPlugin {
     // WORKAROUND DockerPlugin doesn't like '+'
     version := version.value.replace('+', '-'),
     concurrentRestrictions := {
-      // TODO: CO-72: Ensure a more meaningful error message is generated here
-      val limited = sys.env.get("SBT_TASK_LIMIT").map(_.toInt).getOrElse(4)
+      val limited =
+        Try(sys.env.getOrElse("SBT_TASK_LIMIT", "4").toInt).getOrElse {
+          throw new IllegalArgumentException(
+            "SBT_TASK_LIMIT should be an integer value"
+          )
+        }
       Seq(Tags.limitAll(limited))
     }
   )
