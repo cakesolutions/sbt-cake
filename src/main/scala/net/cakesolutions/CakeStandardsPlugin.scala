@@ -12,8 +12,7 @@ import sbt._
 import sbt.IO._
 import sbt.Keys._
 
-import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin
-import ScalafmtCorePlugin.autoImport._
+import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport._
 import wartremover._
 
 /**
@@ -26,10 +25,9 @@ object CakeStandardsPlugin extends AutoPlugin {
   val autoImport = CakeStandardsKeys
   import autoImport._
 
-  // WORKAROUND https://github.com/lucidsoftware/neo-sbt-scalafmt/issues/5
-  override val buildSettings = ScalafmtCorePlugin.buildSettings
-
-  override val projectSettings = ScalafmtCorePlugin.projectSettings ++ Seq(Compile, Test).flatMap(inConfig(_)(scalafmtSettings)) ++ Seq(
+  override val projectSettings = Seq(
+    scalafmtVersion := "1.0.0-RC4",
+    scalafmtOnCompile := true,
     scalacOptions ++= Seq(
       "-encoding",
       "UTF-8",

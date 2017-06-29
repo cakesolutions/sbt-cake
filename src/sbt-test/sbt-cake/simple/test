@@ -1,9 +1,5 @@
 > updateClassifiers
 -> scalafmt::test
-
-# doesn't work https://github.com/lucidsoftware/neo-sbt-scalafmt/issues/2
 > compile
-# workaround
-> scalafmt
-
+# auto format on compile
 > scalafmt::test
