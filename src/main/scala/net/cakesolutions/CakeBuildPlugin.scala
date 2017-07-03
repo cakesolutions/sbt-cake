@@ -22,6 +22,7 @@ import scoverage.ScoverageKeys._
   * - registering our repositories.
   */
 object CakeBuildPlugin extends AutoPlugin {
+  import sbtdynver.DynVerPlugin.{autoImport => DynVer}
 
   /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
   override def requires: Plugins = sbtdynver.DynVerPlugin
@@ -52,7 +53,9 @@ object CakeBuildPlugin extends AutoPlugin {
     sourcesInBase := false,
     javaOptions +=
       s"-Dcake.sbt.root=${(baseDirectory in ThisBuild).value.getCanonicalFile}",
-    // WORKAROUND DockerPlugin doesn't like '+'
+    // WORKAROUND DockerPlugin doesn't like '+', so we need to ensure both
+    // version and dynver are transformed in the same way
+    DynVer.dynver := DynVer.dynver.value.replace('+', '-'),
     version := version.value.replace('+', '-'),
     concurrentRestrictions := {
       val limited =

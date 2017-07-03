@@ -195,6 +195,72 @@ Configuration of this plugin should be avoided in local project SBT build files.
 
 No special tasks are enabled for this plugin.
 
+## `CakePublishMavenPlugin`: Artifact Publishing
+
+Plugin requirements: `DynVerPlugin`
+
+Enabling this plugin provides support for dynamic versioning of project code and for tag based release strategies.
+However, for mono project repositories, only one versioned set of artifacts may be published with this plugin.
+
+When enabled, this plugin allows for the following release workflows (see sections below for how to configure for this):
+* typical SNAPSHOT release workflow is as follows:
+```text
+# Within a Jenkins/CI environment
+# Ensure that the current working tree is clean - otherwise the release will fail!
+sbt createRelease
+```
+* typical production release workflow for version `X.Y.Z` is as follows:
+```text
+# Within a local developer environment or via a Jenkins/CI trigger
+git tag -a vX.Y.Z -m "vX.Y.Z"
+git push --tags
+
+# Within a Jenkins/CI environment
+# Ensure that the current working tree is clean - otherwise the release will fail!
+sbt createRelease
+```
+
+### Plugin Configuration
+
+Should it be necessary to authenticate against the publishing repository, then the `credentials` setting can be used to
+specify a file holding the authentication credentials. By default, the file `$HOME/.sbt/0.13/.credentials` is used (if
+it exists).
+
+Settings for determining where artifacts will be published are as follows:
+* `snapshotRepositoryResolver` - location for the publishing of SNAPSHOT artifacts. For example:
+```scala
+snapshotRepositoryResolver := Some("Snapshot Artifactory" at "http://artifactory.cakesolutions.net/snapshot")
+```
+* `repositoryResolver` - location for the publishing of production artifacts. For example:
+```scala
+repositoryResolver := Some("Nexus" at "http://nexus.cakesolutions.net")
+```
+
+A typical project's `Jenkinsfile` would then be updated to have the following additional stage:
+```text
+stage('Publish') {
+  steps {
+    ansiColor('xterm') {
+      sh "sbt createRelease"
+    }
+  }
+}
+```
+
+The release workflow may be further customised by modifying the settings key `releaseProcess`. By default, the current
+working tree is checked to be clean and project dependencies are checked to be free of SNAPSHOTs, only then will
+artifacts be published.
+
+### SBT Tasks
+
+The main SBT task that continuous integration (CI) environments should use for publishing artifacts to Maven based
+repositories (e.g. Artifactory or Nexus) is `createRelease`.
+
+The following are internal SBT plugin tasks and are not normally expected to be modified by developers:
+* `checkSnapshotDependencies` - assertion based check to ensure that no SNAPSHOT dependencies exist for the code to be
+  published
+* `checkForCleanRepository` - assertion based check to ensure that the current repository working tree is clean.
+
 ## `CakeStandardsPlugin`: Scala Compiler Options, Linter, Wartremover and Scala Format
 
 Plugin requirements: `CakeBuildPlugin` and `DynVerPlugin`
@@ -221,3 +287,16 @@ being maintained and conflicting with [wartremover](https://github.com/wartremov
 ### SBT Tasks
 
 No special tasks are enabled for this plugin.
+
+# Releasing of the `sbt-cake` Plugin to the Sonatype Repository
+
+Currently (and this is temporary - see CO-132), in order to release version `X.Y.Z` of the `sbt-cake` plugin to the
+`net.cakesolutions` Sonatype repository, perform the following actions:
+```text
+git tag -s vX.Y.Z
+sbt publishSigned sonatypeRelease
+git push --tags
+```
+
+In order for releasing to occur, individuals should have the Cake Solutions Sonatype PGP keys setup in their local
+developer environments.
