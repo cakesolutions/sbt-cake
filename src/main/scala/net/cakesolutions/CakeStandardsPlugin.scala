@@ -46,6 +46,8 @@ object CakeStandardsPlugin extends AutoPlugin {
             "-Xlint",
             "-Yno-adapted-args",
             "-Ywarn-dead-code",
+            "-Ywarn-value-discard",
+            "-Ywarn-numeric-widen",
             "-Xfuture"
           ) ++ {
             CrossVersion.partialVersion(scalaVersion.value) match {
