@@ -6,6 +6,11 @@ It defines base settings for continuous integration and continuous deployment au
 and library versioning. The aim here is to supply and recommend a consistent set of good practices for use on all
 projects.
 
+This plugin is intended to be used as an accelerator for early project start up. As a project matures, it is expected
+that teams will migrate plugin functionality into their respective projects. For example, as a project moves towards
+production, then it is expected that teams should control their own library dependencies and so should eventually
+migrate away from the use of the `CakePlatformPlugin`.
+
 Note that by incorporating the `sbt-cake` plugin within your local project you automatically enable the
 [neo-sbt-scalafmt](http://scalameta.org/scalafmt/) plugin. This plugin provides the following additional SBT tasks:
 * `scalafmt` - rewrites project `src/main` code to match style rules present in a `.scalafmt.conf` file
