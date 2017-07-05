@@ -1,0 +1,62 @@
+# Launch mock issue management server
+> stage
+$ exec chmod a+x start-server.sh
+$ exec chmod a+x stop-server.sh
+> startServer
+
+$ exec echo "TEST: work without a git project repository"
+$ exec echo "- expect SNAPSHOT release note publishing to be skipped"
+
+> show version
+
+> publishReleaseNotes
+$ absent target/universal/stage/post-version.json
+$ absent target/universal/stage/put-issue-test-1.json
+$ absent target/universal/stage/put-issue-commit.json
+$ absent target/universal/stage/put-issue-test-2.json
+$ absent target/universal/stage/put-version.json
+
+$ exec echo "TEST: work with a clean (untagged) git project repository"
+$ exec echo "- expect SNAPSHOT release note publishing to be skipped"
+
+$ exec git init
+# The following is needed for CI environments
+$ exec git config user.email "jenkins@cakesolutions.net"
+$ exec git config user.name "Jenkins"
+$ exec git add .
+$ exec git commit -m "test-1: first commit"
+
+> reload
+> show version
+
+> publishReleaseNotes
+$ absent target/universal/stage/post-version.json
+$ absent target/universal/stage/put-issue-test-1.json
+$ absent target/universal/stage/put-issue-commit.json
+$ absent target/universal/stage/put-issue-test-2.json
+$ absent target/universal/stage/put-version.json
+
+$ exec echo "TEST: work with a clean (tagged) git project repository"
+$ exec echo "- expect release note publishing to succeed"
+
+$ exec touch example-1.txt
+$ exec git add .
+$ exec git commit -m "commit with no issue prefix"
+$ exec touch example-2.txt
+$ exec git add .
+$ exec git commit -m "test-2: second commit"
+$ exec git tag -a v0.1.0 -m "v0.1.0"
+
+> reload
+> show version
+
+> publishReleaseNotes
+$ exists target/universal/stage/post-version.json
+$ exists target/universal/stage/put-issue-test-1.json
+$ absent target/universal/stage/put-issue-commit.json
+$ exists target/universal/stage/put-issue-test-2.json
+$ exists target/universal/stage/put-version.json
+
+# Kill mock issue management server
+#$ exec ./stop-server.sh
+> stopServer

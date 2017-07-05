@@ -54,6 +54,12 @@ for more details.
 
 Used by `CakePlatformPlugin`, `CakeStandardsPlugin` and `CakeBuildPlugin`.
 
+## `JIRA_AUTH_TOKEN`
+
+Plaintext authentication token used to authenticate against Jira.
+
+Used by `ReleaseNotesPlugin`.
+
 ## `SBT_TASK_LIMIT`
 
 When defined, holds a positive integer value. This is used to constrain the number of concurrently executing SBT tasks
@@ -292,6 +298,50 @@ No special tasks are enabled for this plugin.
 
 Currently (and this is temporary - see CO-132), in order to release version `X.Y.Z` of the `sbt-cake` plugin to the
 `net.cakesolutions` Sonatype repository, perform the following actions:
+```text
+git tag -s vX.Y.Z
+sbt publishSigned sonatypeRelease
+git push --tags
+```
+
+In order for releasing to occur, individuals should have the Cake Solutions Sonatype PGP keys setup in their local
+developer environments.
+
+## `ReleaseNotesPlugin`: Publish Release Notes to Project Management Tools
+
+Plugin requirements: `CakePublishMavenPlugin` and `CakeBuildInfoPlugin`
+
+Enabling this plugin in a project allows release notes to be automatically generated and submitted to an issue
+management tool such as Jira. This allows the issue management tool to be the single source of truth regarding the
+current state of a project.
+
+A commit naming convention is used by this plugin to ensure that the correct issue management tickets for a release may
+be identified. The plugin assumes that all tickets for an issue will have commit messages prefixed to match the regular
+expression `\w+-\d+`.
+
+Having enabled and configured this plugin, a developer only needs to follow the tag release strategy of the
+`CakePublishMavenPlugin` - i.e. run the `createRelease` task. No other special actions are required.
+
+### Plugin Configuration
+
+In order to configure this plugin, the following settings keys need to be defined:
+* `issueManagementUrl` - this defines the URL of the issue management server
+* `issueManagementProject` - this defines the project within the issue management server that tracks this project's
+  issues and against which release notes should be created.
+
+### SBT Tasks
+
+The following SBT internal tasks exist for this plugin:
+* `checkReleaseNoteSettings` - used to ensure that all preconditions for using this plugin are satisfied. If this check
+  fails, then the release will be terminated. This task is ran as the first step of a `CakePublishMavenPlugin`
+  `createRelease` task run.
+* `publishReleaseNotes` - creates the issue management release, adds issues to that release and then closes the release.
+  This task is ran as the last step of a `CakePublishMavenPlugin` `createRelease` task run.
+
+# Releasing of the `sbt-cake` Plugin to the Sonatype Repository
+
+In order to release version `X.Y.Z` of the `sbt-cake` plugin to the `net.cakesolutions` Sonatype repository, perform the
+following actions:
 ```text
 git tag -s vX.Y.Z
 sbt publishSigned sonatypeRelease

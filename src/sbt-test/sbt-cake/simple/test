@@ -1,9 +1,9 @@
+$ exec echo "TEST: check unformated code fails formatting check"
+$ exec echo "- expect test to fail"
 > updateClassifiers
 -> scalafmt::test
 
-# doesn't work https://github.com/lucidsoftware/neo-sbt-scalafmt/issues/2
+$ exec echo "TEST: check formated code passes formatting check"
+$ exec echo "- expect test to pass"
 > compile
-# workaround
-> scalafmt
-
 > scalafmt::test

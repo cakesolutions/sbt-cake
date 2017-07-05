@@ -1,5 +1,7 @@
 name in ThisBuild := "simple"
 
+scalafmtOnCompile := true
+
 val logging = project
   .enablePlugins(BuildInfoPlugin)
 

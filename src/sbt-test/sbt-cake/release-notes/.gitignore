@@ -1,0 +1,5 @@
+# This file is needed for scripted testing - which occurs outside this git repository
+
+global/
+target/
+*.log

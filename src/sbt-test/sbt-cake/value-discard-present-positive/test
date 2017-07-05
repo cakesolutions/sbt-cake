@@ -1,3 +1,5 @@
 > show test:scalacOptions
 
+$ exec echo "TEST: -Ywarn-value-discard present"
+$ exec echo "- expect tests to pass"
 > test
