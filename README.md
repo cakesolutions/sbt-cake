@@ -340,9 +340,10 @@ The following SBT internal tasks exist for this plugin:
 
 # Releasing of the `sbt-cake` Plugin to the Sonatype Repository
 
-In order to release version `X.Y.Z` of the `sbt-cake` plugin to the `net.cakesolutions` Sonatype repository, perform the
-following actions:
+Currently (and this is temporary - see CO-132), in order to release version `X.Y.Z` of the `sbt-cake` plugin to the
+`net.cakesolutions` Sonatype repository, perform the following actions:
 ```text
+export CI=local
 git tag -s vX.Y.Z
 sbt publishSigned sonatypeRelease
 git push --tags
