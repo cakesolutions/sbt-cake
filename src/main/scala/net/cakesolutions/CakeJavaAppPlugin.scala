@@ -20,6 +20,10 @@ object CakeJavaAppPlugin extends AutoPlugin {
     com.typesafe.sbt.packager.archetypes.JavaServerAppPackaging
   override def trigger = allRequirements
   override def projectSettings = Seq(
+    // WORKAROUND https://github.com/sbt/sbt-native-packager/issues/978
+    bashScriptExtraDefines := List(
+      """addJava "-Duser.dir=$(realpath "$(cd "${app_home}/.."; pwd -P)")""""
+    ),
     mappings in Universal ++= {
       val jar = (packageBin in Compile).value // forces compile
       val src = sourceDirectory.value
