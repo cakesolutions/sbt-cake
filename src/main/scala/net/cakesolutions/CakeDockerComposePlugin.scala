@@ -74,13 +74,6 @@ object CakeDockerComposePlugin extends AutoPlugin {
 
   /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
   override val projectSettings: Seq[Setting[_]] = Seq(
-    // we trigger dockerRepository on envvar because we do not want it
-    // in publishLocal, but it gets picked up there, so we only pass
-    // the envvar when doing the final publish.
-    dockerRepository :=
-      sys.env
-        .get("DOCKER_REPOSITORY")
-        .orElse(Some((name in ThisBuild).value)),
     dockerComposeFile := file(s"docker/${name.value}.yml"),
     dockerComposeImageTask := (publishLocal in Docker).value,
     dockerComposeUp := dockerComposeUpTask.value,

@@ -25,7 +25,13 @@ object CakeDockerPlugin extends AutoPlugin {
   override def projectSettings: Seq[Setting[_]] = Seq(
     dockerBaseImage := "openjdk:8-jre-alpine",
     dockerUpdateLatest := true,
-    dockerRepository := None,
+    // we trigger dockerRepository on envvar because we do not want it
+    // in publishLocal, but it gets picked up there, so we only pass
+    // the envvar when doing the final publish.
+    dockerRepository :=
+      sys.env
+        .get("DOCKER_REPOSITORY")
+        .orElse(Some((name in ThisBuild).value)),
     packageName in Docker := name.value,
     maintainer in Docker := "Cake Solutions <devops@cakesolutions.net>",
     version in Docker := sys.props.get("tag").getOrElse(version.value),

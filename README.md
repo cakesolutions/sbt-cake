@@ -44,7 +44,7 @@ Used by `CakePlatformPlugin` and `CakeStandardsPlugin`.
 Setting of this environment variable defines which Docker repository that images will be published to. This environment
 variable is typically only set within a continuous integration (CI) environment when the `publish` task is ran.
 
-Used by `CakeDockerComposePlugin`.
+Used by `CakeDockerPlugin`.
 
 ## `GC_LOGGING`
 
