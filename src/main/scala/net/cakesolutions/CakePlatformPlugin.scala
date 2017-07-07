@@ -15,6 +15,7 @@ import wartremover._
 /**
   * Library dependency keys that will be auto-imported when this plugin is
   * enabled on a project.
+  * TODO: CO-143: Ideally we should refactor all dependencies in a single place.
   */
 object CakePlatformKeys {
 
@@ -27,8 +28,13 @@ object CakePlatformKeys {
     * and force you to update your build.sbt
     */
   object Versions {
-    val akka: String = "2.4.18"
-    val play: String = PlayVersion.current
+    val akka = "2.4.18"
+    val akkaHttp = "10.0.5"
+    val gatling = "2.2.3"
+    val jackson = "2.8.7"
+    val kafkaClient = "0.10.2.0"
+    val netty4 = "4.0.45.Final"
+    val play = PlayVersion.current
   }
 
   /** Convenient bundles for depending on platform/core libraries */
@@ -36,29 +42,28 @@ object CakePlatformKeys {
     // WORKAROUND https://issues.apache.org/jira/browse/CASSANDRA-10984
     //            cassandra needs a subset of netty 4
     val cassandra: Seq[ModuleID] = {
-      val netty4 = "4.0.45.Final"
       Seq(
         // Update attempted to 3.10, required unclear additional properties
         // (cdc_raw_directory)
         "org.apache.cassandra" % "cassandra-all" % "3.7"
           exclude ("io.netty", "netty-all")
       ) ++ Seq(
-        "io.netty" % "netty-buffer" % netty4,
-        "io.netty" % "netty-common" % netty4,
-        "io.netty" % "netty-transport" % netty4,
-        "io.netty" % "netty-transport-native-epoll" % netty4
+        "io.netty" % "netty-buffer" % Versions.netty4,
+        "io.netty" % "netty-common" % Versions.netty4,
+        "io.netty" % "netty-transport" % Versions.netty4,
+        "io.netty" % "netty-transport-native-epoll" % Versions.netty4
           classifier "linux-x86_64",
-        "io.netty" % "netty-handler" % netty4
+        "io.netty" % "netty-handler" % Versions.netty4
       )
     }
 
     val gatling: Seq[ModuleID] = {
-      val version = "2.2.3"
       Seq(
-        "io.gatling" % "gatling-app" % version,
-        "io.gatling.highcharts" % "gatling-charts-highcharts" % version,
-        "io.gatling" % "gatling-test-framework" % version,
-        "io.gatling" % "gatling-http" % version
+        "io.gatling" % "gatling-app" % Versions.gatling,
+        "io.gatling.highcharts" % "gatling-charts-highcharts"
+          % Versions.gatling,
+        "io.gatling" % "gatling-test-framework" % Versions.gatling,
+        "io.gatling" % "gatling-http" % Versions.gatling
       )
     }
 
@@ -77,11 +82,11 @@ object CakePlatformKeys {
     )
 
     val kafkaClient: Seq[ModuleID] = {
-      val v = "0.10.2.0"
       Seq(
-        "net.cakesolutions" %% "scala-kafka-client" % v,
-        "net.cakesolutions" %% "scala-kafka-client-akka" % v,
-        "net.cakesolutions" %% "scala-kafka-client-testkit" % v % Test
+        "net.cakesolutions" %% "scala-kafka-client" % Versions.kafkaClient,
+        "net.cakesolutions" %% "scala-kafka-client-akka" % Versions.kafkaClient,
+        "net.cakesolutions" %% "scala-kafka-client-testkit"
+          % Versions.kafkaClient % Test
       )
     }
 
@@ -99,17 +104,16 @@ object CakePlatformKeys {
     ) ++ cassandra.map(_ % Test)
 
     val akkaHttp: Seq[ModuleID] = {
-      val akka_http = "10.0.5"
-      val jackson = "2.8.7"
       Seq(
-        "com.typesafe.akka" %% "akka-http-core" % akka_http,
-        "com.typesafe.akka" %% "akka-http" % akka_http,
-        "com.typesafe.akka" %% "akka-http-testkit" % akka_http % Test,
+        "com.typesafe.akka" %% "akka-http-core" % Versions.akkaHttp,
+        "com.typesafe.akka" %% "akka-http" % Versions.akkaHttp,
+        "com.typesafe.akka" %% "akka-http-testkit" % Versions.akkaHttp % Test,
         "com.github.swagger-akka-http" %% "swagger-akka-http" % "0.9.1",
         // 1.12+ is for play 2.6.x
         "de.heikoseeberger" %% "akka-http-play-json" % "1.10.1",
-        "com.fasterxml.jackson.core" % "jackson-databind" % jackson,
-        "com.fasterxml.jackson.module" %% "jackson-module-scala" % jackson
+        "com.fasterxml.jackson.core" % "jackson-databind" % Versions.jackson,
+        "com.fasterxml.jackson.module" %% "jackson-module-scala"
+          % Versions.jackson
       )
     }
 

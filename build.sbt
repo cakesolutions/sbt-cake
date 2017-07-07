@@ -3,6 +3,7 @@
 
 import de.heikoseeberger.sbtheader.FileType
 import de.heikoseeberger.sbtheader.HeaderPlugin.autoImport.HeaderFileType
+import CakeDependencies._
 
 organization := "net.cakesolutions"
 
@@ -34,29 +35,31 @@ scalacOptions in Compile ++= Seq("-feature", "-deprecation")
 
 // TODO: CO-13: clean up this dependency maintenance nightmare
 
-addSbtPlugin("com.dwijnand" % "sbt-dynver" % "1.2.0")
-addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.7.0")
-addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.0.1")
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.5.15")
-addSbtPlugin("com.typesafe.sbt" % "sbt-digest" % "1.1.1")
-addSbtPlugin("com.typesafe.sbt" % "sbt-git" % "0.9.2")
-addSbtPlugin("com.typesafe.sbt" % "sbt-gzip" % "1.0.0")
-addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.1.6")
-addSbtPlugin("io.get-coursier" % "sbt-coursier" % "1.0.0-RC6")
-addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.5.0")
-addSbtPlugin("org.wartremover" % "sbt-wartremover" % "2.1.0")
+addSbtPlugin(SbtDependencies.dynver)
+addSbtPlugin(SbtDependencies.buildInfo)
+addSbtPlugin(SbtDependencies.pgp)
+addSbtPlugin(SbtDependencies.plugin)
+addSbtPlugin(SbtDependencies.digest)
+addSbtPlugin(SbtDependencies.git)
+addSbtPlugin(SbtDependencies.gzip)
+addSbtPlugin(SbtDependencies.packager)
+addSbtPlugin(SbtDependencies.coursier)
+addSbtPlugin(SbtDependencies.scoverage)
+addSbtPlugin(SbtDependencies.wartRemover)
 // The following plugin is otherwise known as neo-sbt-scalafmt
 // - see: https://github.com/lucidsoftware/neo-sbt-scalafmt
-addSbtPlugin("com.lucidchart" % "sbt-scalafmt-coursier" % "1.7")
+addSbtPlugin(SbtDependencies.scalafmt)
 
 enablePlugins(ScalafmtPlugin)
 
 // TODO: CO-68: remove JSR305 dependency when SBT moves away from Scala 2.10
-val findbugs = "com.google.code.findbugs" % "jsr305" % "3.0.2"
-libraryDependencies += findbugs % "provided"
+libraryDependencies += jsr305 % "provided"
 
+// These are dependency overrides which are different than the regular dependencies
+// and should be maintained here.
+// TODO: CO-143: Ideally we should refactor all dependencies in a single place.
 dependencyOverrides ++= Set(
-  findbugs,
+  jsr305,
   "com.google.guava" % "guava" % "19.0",
   "com.typesafe" % "config" % "1.3.1",
   "com.typesafe.akka" %% "akka-actor" % "2.3.11",
