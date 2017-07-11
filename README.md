@@ -162,7 +162,8 @@ typically used alongside the `CakeJavaAppPlugin`.
 Docker container version number may be specified at the SBT command line by setting the system property `tag`.
 
 The following configuration settings can be modified in projects that enable this plugin:
-* `dockerRepository` (`None` by default) - used to define where the container will be published
+* `dockerRepository` (set to the value of `DOCKER_REPOSITORY` or the project name) - used to define where the container
+  will be published
 
 ### SBT Tasks
 
@@ -175,6 +176,9 @@ Plugin requirements: `JavaServerAppPackaging`
 
 Enabling this plugin in a project configures how JVM applications may be built. See
 [Java Application Archetype](http://www.scala-sbt.org/sbt-native-packager/archetypes/java_app/) for more information.
+
+Should your Docker containers use (for example) an Alpine base image, then it will be necessary to also enable the
+`AshScriptPlugin` as a dependency in your project code.
 
 ### Plugin Configuration
 
@@ -293,19 +297,6 @@ being maintained and conflicting with [wartremover](https://github.com/wartremov
 ### SBT Tasks
 
 No special tasks are enabled for this plugin.
-
-# Releasing of the `sbt-cake` Plugin to the Sonatype Repository
-
-Currently (and this is temporary - see CO-132), in order to release version `X.Y.Z` of the `sbt-cake` plugin to the
-`net.cakesolutions` Sonatype repository, perform the following actions:
-```text
-git tag -s vX.Y.Z
-sbt publishSigned sonatypeRelease
-git push --tags
-```
-
-In order for releasing to occur, individuals should have the Cake Solutions Sonatype PGP keys setup in their local
-developer environments.
 
 ## `ReleaseNotesPlugin`: Publish Release Notes to Project Management Tools
 

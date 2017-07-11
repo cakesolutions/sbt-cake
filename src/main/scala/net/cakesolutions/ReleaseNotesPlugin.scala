@@ -254,6 +254,7 @@ object ReleaseNotesPlugin extends AutoPlugin {
         }
       }
     }
+
     // scalastyle:on magic.number
 
     private def post(

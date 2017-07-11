@@ -39,6 +39,7 @@ object CakePlatformKeys {
 
   /** Convenient bundles for depending on platform/core libraries */
   object PlatformDependencies {
+
     // WORKAROUND https://issues.apache.org/jira/browse/CASSANDRA-10984
     //            cassandra needs a subset of netty 4
     val cassandra: Seq[ModuleID] = {
@@ -231,9 +232,31 @@ object CakePlatformPlugin extends AutoPlugin {
       // https://issues.apache.org/jira/browse/CASSANDRA-10984
       SbtExclusionRule("io.netty", "netty-all"),
       // clean up the mess made by everybody who doesn't use slf4j...
-      SbtExclusionRule("org.apache.logging.log4j"),
-      SbtExclusionRule("log4j"),
-      SbtExclusionRule("commons-logging"),
+      SbtExclusionRule("org.apache.logging.log4j", "log4j-api-scala_2.10"),
+      SbtExclusionRule("org.apache.logging.log4j", "log4j-liquibase"),
+      SbtExclusionRule("org.apache.logging.log4j", "log4j-jul"),
+      SbtExclusionRule("org.apache.logging.log4j", "log4j-iostreams"),
+      SbtExclusionRule("org.apache.logging.log4j", "log4j-nosql"),
+      SbtExclusionRule("org.apache.logging.log4j", "log4j-bom"),
+      SbtExclusionRule("org.apache.logging.log4j", "log4j-osgi"),
+      SbtExclusionRule("org.apache.logging.log4j", "log4j-api-scala_2.11"),
+      SbtExclusionRule("org.apache.logging.log4j", "log4j-jmx-gui"),
+      SbtExclusionRule("org.apache.logging.log4j", "log4j-taglib"),
+      SbtExclusionRule("org.apache.logging.log4j", "log4j-web"),
+      SbtExclusionRule("org.apache.logging.log4j", "log4j-flume-ng"),
+      SbtExclusionRule("org.apache.logging.log4j", "log4j-jcl"),
+      SbtExclusionRule("org.apache.logging.log4j", "log4j-to-slf4j"),
+      SbtExclusionRule("org.apache.logging.log4j", "log4j-slf4j-impl"),
+      SbtExclusionRule("org.apache.logging.log4j", "log4j-1.2-api"),
+      SbtExclusionRule("org.apache.logging.log4j", "log4j-core-its"),
+      SbtExclusionRule("org.apache.logging.log4j", "log4j-core"),
+      SbtExclusionRule("org.apache.logging.log4j", "log4j-api"),
+      SbtExclusionRule("org.apache.logging.log4j", "log4j"),
+      SbtExclusionRule("log4j", "apache-log4j-extras"),
+      SbtExclusionRule("log4j", "log4j"),
+      SbtExclusionRule("commons-logging", "commons-logging"),
+      SbtExclusionRule("commons-logging", "commons-logging-api"),
+      SbtExclusionRule("commons-logging", "commons-logging-adapters"),
       SbtExclusionRule("org.slf4j", "slf4j-log4j12"),
       SbtExclusionRule("org.slf4j", "slf4j-jdk14"),
       SbtExclusionRule("org.slf4j", "slf4j-jcl.jar")

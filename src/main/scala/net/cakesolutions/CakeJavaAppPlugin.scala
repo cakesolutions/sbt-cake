@@ -13,6 +13,7 @@ import sbt.Keys._
 object CakeJavaAppPlugin extends AutoPlugin {
   import com.typesafe.sbt.SbtNativePackager._
   import com.typesafe.sbt.packager.linux.Mapper._
+  import com.typesafe.sbt.packager.Keys._
 
   /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
   override def requires: Plugins =
@@ -23,6 +24,10 @@ object CakeJavaAppPlugin extends AutoPlugin {
 
   /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
   override def projectSettings: Seq[Setting[_]] = Seq(
+    // TODO: CO-150: Remove CakeJavaAppPlugin bash script hack
+    bashScriptExtraDefines := List(
+      """addJava "-Duser.dir=$(realpath "$(cd "${app_home}/.."; pwd -P)")""""
+    ),
     mappings in Universal ++= {
       val jar = (packageBin in Compile).value // forces compile
       val src = sourceDirectory.value

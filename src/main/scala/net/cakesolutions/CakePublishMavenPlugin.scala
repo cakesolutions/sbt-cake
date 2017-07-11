@@ -91,6 +91,7 @@ object CakePublishMavenPlugin extends AutoPlugin {
     s"0.0.0-${sbtdynver.DynVer.timestamp(date)}-SNAPSHOT"
 
   private object Defaults {
+
     def addPublishingCredentials(): Setting[Task[Seq[Credentials]]] = {
       credentials ++= {
         if ((Path.userHome / ".sbt" / "0.13" / ".credentials").exists()) {
@@ -178,14 +179,17 @@ object CakePublishMavenPlugin extends AutoPlugin {
           m => m.isChanging || m.revision.endsWith("-SNAPSHOT")
         )
 
-        require(snapshots.isEmpty, s"""
+        require(
+          snapshots.isEmpty,
+          s"""
              |Aborting release process for ${name.value}. Snapshot dependencies
              |have been detected:
              |${snapshots.mkString("\t", "\n", "")}
              |
              |Releasing artifacts that depend on snapshots produces
              |non-deterministic behaviour.
-           """.stripMargin)
+           """.stripMargin
+        )
       }
 
     def checkForCleanRepository: Def.Initialize[Task[Unit]] =
