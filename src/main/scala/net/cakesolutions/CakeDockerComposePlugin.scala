@@ -30,21 +30,31 @@ object CakeDockerComposePlugin extends AutoPlugin {
 
   private val dockerComposeUpTask: Def.Initialize[Task[Unit]] = Def.task {
     val _ = dockerComposeImageTask.value
-    val input = dockerComposeFile.value.getCanonicalPath
-    val res = s"docker-compose -f $input up -d".!
-    if (res != 0) {
+    val projectOverrides =
+      dockerComposeFiles.value.flatMap(
+        yaml => Seq("-f", yaml.getCanonicalPath)
+      )
+    val result =
+      Process(Seq("docker-compose") ++ projectOverrides ++ Seq("up", "-d")).!
+    if (result != 0) {
       throw new IllegalStateException(
-        s"`docker-compose up` returned $res (are you sure all image " +
+        s"`docker-compose up` returned $result (are you sure all image " +
           "dependencies are in build.sbt?)"
       )
     }
   }
 
   private val dockerComposeDownTask: Def.Initialize[Task[Unit]] = Def.task {
-    val input = dockerComposeFile.value.getCanonicalPath
-    val res = s"docker-compose -f $input down".!
-    if (res != 0) {
-      throw new IllegalStateException(s"`docker-compose down` returned $res")
+    val projectOverrides =
+      dockerComposeFiles.value.flatMap(
+        yaml => Seq("-f", yaml.getCanonicalPath)
+      )
+    val result =
+      Process(Seq("docker-compose") ++ projectOverrides ++ Seq("up", "-d")).!
+    if (result != 0) {
+      throw new IllegalStateException(
+        s"`docker-compose down` returned $result"
+      )
     }
   }
 
@@ -74,7 +84,7 @@ object CakeDockerComposePlugin extends AutoPlugin {
 
   /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
   override val projectSettings: Seq[Setting[_]] = Seq(
-    dockerComposeFile := file(s"docker/${name.value}.yml"),
+    dockerComposeFiles := Seq(file("docker/docker-compose.yml")),
     dockerComposeImageTask := (publishLocal in Docker).value,
     dockerComposeUp := dockerComposeUpTask.value,
     dockerComposeDown := dockerComposeDownTask.value,
@@ -100,10 +110,14 @@ object CakeDockerComposePlugin extends AutoPlugin {
 object CakeDockerComposePluginKeys {
 
   /**
-    * Setting key defining the file to be used by docker-compose commands
+    * Setting key defining the project files to be used by docker-compose
+    * commands. Files here will be composed using docker-compose project
+    * overrides.
     */
-  val dockerComposeFile: SettingKey[File] =
-    settingKey[File]("docker-compose.yml file to use in dockerComposeUp")
+  val dockerComposeFiles: SettingKey[Seq[File]] =
+    settingKey[Seq[File]](
+      "docker-compose YAML files to use in dockerComposeUp"
+    )
 
   /**
     * Task defining how docker images will be locally published
