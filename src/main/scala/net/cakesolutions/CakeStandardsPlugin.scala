@@ -26,7 +26,7 @@ object CakeStandardsPlugin extends AutoPlugin {
   import autoImport._
 
   override val projectSettings = Seq(
-    scalafmtVersion := "1.0.0-RC4",
+    scalafmtVersion := "1.1.0",
     scalafmtOnCompile := true,
     scalacOptions ++= Seq(
       "-encoding",
