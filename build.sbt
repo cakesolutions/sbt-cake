@@ -3,7 +3,21 @@
 
 import de.heikoseeberger.sbtheader.FileType
 import de.heikoseeberger.sbtheader.HeaderPlugin.autoImport.HeaderFileType
-import CakeDependencies._
+import net.cakesolutions.CakePlatformDependencies._
+
+// An SBT source generator is used to copy centralised library dependencies
+// into this build level
+sourceGenerators in Compile += Def.task {
+  val deps =
+    (baseDirectory in Compile).value /
+      "project" / "project" / "CakePlatformDependencies.scala"
+  val projectDeps =
+    (sourceManaged in Compile).value / "CakePlatformDependencies.scala"
+
+  IO.copyFile(deps, projectDeps)
+
+  Seq(projectDeps)
+}.taskValue
 
 organization := "net.cakesolutions"
 
@@ -38,7 +52,7 @@ scalacOptions in Compile ++= Seq("-feature", "-deprecation")
 addSbtPlugin(SbtDependencies.dynver)
 addSbtPlugin(SbtDependencies.buildInfo)
 addSbtPlugin(SbtDependencies.pgp)
-addSbtPlugin(SbtDependencies.plugin)
+addSbtPlugin(SbtDependencies.play)
 addSbtPlugin(SbtDependencies.digest)
 addSbtPlugin(SbtDependencies.git)
 addSbtPlugin(SbtDependencies.gzip)
@@ -55,26 +69,22 @@ enablePlugins(ScalafmtPlugin)
 // TODO: CO-68: remove JSR305 dependency when SBT moves away from Scala 2.10
 libraryDependencies += jsr305 % "provided"
 
-// These are dependency overrides which are different than the regular dependencies
-// and should be maintained here.
-// TODO: CO-143: Ideally we should refactor all dependencies in a single place.
 dependencyOverrides ++= Set(
   jsr305,
-  "com.google.guava" % "guava" % "19.0",
-  "com.typesafe" % "config" % "1.3.1",
-  "com.typesafe.akka" %% "akka-actor" % "2.3.11",
-  "com.typesafe.sbt" % "sbt-js-engine" % "1.1.4",
-  "com.typesafe.sbt" % "sbt-native-packager" % "1.1.6",
-  "com.typesafe.sbt" % "sbt-web" % "1.3.0",
-  "commons-codec" % "commons-codec" % "1.6",
-  "commons-logging" % "commons-logging" % "1.1.3",
-  "org.apache.commons" % "commons-compress" % "1.9",
-  "org.apache.commons" % "commons-lang3" % "3.4",
-  "org.apache.httpcomponents" % "httpclient" % "4.3.6",
-  "org.fusesource.leveldbjni" % "leveldbjni" % "1.7",
-  "org.scalamacros" %% "quasiquotes" % "2.1.0",
-  "org.slf4j" % "slf4j-api" % "1.7.12",
-  "org.webjars" % "webjars-locator" % "0.26"
+  guava,
+  typesafeConfig,
+  SbtDependencies.jsEngine,
+  SbtDependencies.packager,
+  SbtDependencies.web,
+  ApacheCommons.codec,
+  ApacheCommons.logging,
+  ApacheCommons.compress,
+  ApacheCommons.lang3,
+  httpClient,
+  levelDbJni,
+  quasiQuotes,
+  Slf4j.api,
+  Webjars.locator
 )
 
 // For publishing this plugin to Sonatype in CI environments

@@ -12,4 +12,4 @@ val engine = project.enablePlay
 
 val performance = project.enableIntegrationTests
   .enablePlugins(DockerPlugin, AshScriptPlugin)
-  .settings(libraryDependencies ++= PlatformDependencies.gatling)
+  .settings(libraryDependencies ++= PlatformBundles.gatling)

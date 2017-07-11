@@ -1,0 +1,158 @@
+// Copyright: 2017 https://github.com/cakesolutions/sbt-cake/graphs
+// License: http://www.apache.org/licenses/LICENSE-2.0
+
+package net.cakesolutions
+
+import sbt._
+
+/**
+  * Dependencies referenced in sbt-cake plugins
+  */
+object CakePlatformDependencies {
+
+  // Update attempted to 3.10, required unclear additional properties
+  // (cdc_raw_directory)
+  val cassandraAll: ModuleID = "org.apache.cassandra" % "cassandra-all" % "3.7"
+  val guava: ModuleID = "com.google.guava" % "guava" % "19.0"
+  val httpClient: ModuleID =
+    "org.apache.httpcomponents" % "httpclient" % "4.3.6"
+  // janino 3.0.6 is not compatible and causes
+  // http://www.slf4j.org/codes.html#replay
+  val janino: ModuleID = "org.codehaus.janino" % "janino" % "2.7.8"
+  // TODO: CO-68: remove JSR305 dependency when SBT moves away from Scala 2.10
+  val jsr305: ModuleID = "com.google.code.findbugs" % "jsr305" % "3.0.2"
+  val levelDbJni: ModuleID = "org.fusesource.leveldbjni" % "leveldbjni" % "1.7"
+  val logbackClassic: ModuleID = "ch.qos.logback" % "logback-classic" % "1.2.3"
+  val netty3: ModuleID = "io.netty" % "netty" % "3.10.6.Final"
+  val quasiQuotes: ModuleID = "org.scalamacros" %% "quasiquotes" % "2.1.0"
+  val scalacheck: ModuleID = "org.scalacheck" %% "scalacheck" % "1.13.5"
+  val scalaLogging: ModuleID =
+    "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0"
+  val scalatest: ModuleID = "org.scalatest" %% "scalatest" % "3.0.3"
+  val shapeless: ModuleID = "com.chuusai" %% "shapeless" % "2.3.2"
+  val swagger: ModuleID =
+    "com.github.swagger-akka-http" %% "swagger-akka-http" % "0.9.1"
+  val typesafeConfig: ModuleID = "com.typesafe" % "config" % "1.3.1"
+
+  object Akka {
+    val version = "2.4.18"
+
+    val actor: ModuleID = "com.typesafe.akka" %% "akka-actor" % version
+    val chill: ModuleID = "com.twitter" %% "chill-akka" % "0.9.2"
+    val clusterSharding: ModuleID =
+      "com.typesafe.akka" %% "akka-cluster-sharding" % version
+    val clusterTools: ModuleID =
+      "com.typesafe.akka" %% "akka-cluster-tools" % version
+    val persistence: ModuleID =
+      "com.typesafe.akka" %% "akka-persistence" % version
+    val persistenceCassandra: ModuleID =
+      "com.typesafe.akka" %% "akka-persistence-cassandra" % "0.24"
+    val persistenceQuery: ModuleID =
+      "com.typesafe.akka" %% "akka-persistence-query-experimental" % version
+    val playJson: ModuleID =
+      "de.heikoseeberger" %% "akka-http-play-json" % "1.10.1"
+    val slf4j: ModuleID = "com.typesafe.akka" %% "akka-slf4j" % version
+    val testkit: ModuleID = "com.typesafe.akka" %% "akka-testkit" % version
+
+    object Http {
+      val version = "10.0.5"
+
+      val base: ModuleID = "com.typesafe.akka" %% "akka-http" % version
+      val core: ModuleID = "com.typesafe.akka" %% "akka-http-core" % version
+      val sprayJson: ModuleID =
+        "com.typesafe.akka" %% "akka-http-spray-json" % version
+      val testkit: ModuleID =
+        "com.typesafe.akka" %% "akka-http-testkit" % version
+    }
+  }
+
+  object ApacheCommons {
+    val codec: ModuleID = "commons-codec" % "commons-codec" % "1.6"
+    val compress: ModuleID = "org.apache.commons" % "commons-compress" % "1.9"
+    val lang3: ModuleID = "org.apache.commons" % "commons-lang3" % "3.4"
+    val logging: ModuleID = "commons-logging" % "commons-logging" % "1.1.3"
+  }
+
+  object Gatling {
+    val version = "2.2.3"
+
+    val app: ModuleID = "io.gatling" % "gatling-app" % version
+    val highcharts: ModuleID =
+      "io.gatling.highcharts" % "gatling-charts-highcharts" % version
+    val http: ModuleID = "io.gatling" % "gatling-http" % version
+    val testkit: ModuleID = "io.gatling" % "gatling-test-framework" % version
+  }
+
+  object Jackson {
+    val version = "2.8.7"
+
+    val databind: ModuleID =
+      "com.fasterxml.jackson.core" % "jackson-databind" % version
+    val scala: ModuleID =
+      "com.fasterxml.jackson.module" %% "jackson-module-scala" % version
+  }
+
+  object Netty4 {
+    val version = "4.0.45.Final"
+
+    val buffer: ModuleID = "io.netty" % "netty-buffer" % version
+    val common: ModuleID = "io.netty" % "netty-common" % version
+    val epoll: ModuleID = "io.netty" % "netty-transport-native-epoll" % version
+    val handler: ModuleID = "io.netty" % "netty-handler" % version
+    val transport: ModuleID = "io.netty" % "netty-transport" % version
+  }
+
+  object SbtDependencies {
+    val buildInfo: ModuleID = "com.eed3si9n" % "sbt-buildinfo" % "0.7.0"
+    val coursier: ModuleID = "io.get-coursier" % "sbt-coursier" % "1.0.0-RC6"
+    val digest: ModuleID = "com.typesafe.sbt" % "sbt-digest" % "1.1.1"
+    val dynver: ModuleID = "com.dwijnand" % "sbt-dynver" % "1.2.0"
+    val git: ModuleID = "com.typesafe.sbt" % "sbt-git" % "0.9.2"
+    val gzip: ModuleID = "com.typesafe.sbt" % "sbt-gzip" % "1.0.0"
+    val header: ModuleID = "de.heikoseeberger" % "sbt-header" % "2.0.0"
+    val packager: ModuleID =
+      "com.typesafe.sbt" % "sbt-native-packager" % "1.1.6"
+    val pgp: ModuleID = "com.jsuereth" % "sbt-pgp" % "1.0.1"
+    val play: ModuleID = "com.typesafe.play" % "sbt-plugin" % "2.5.15"
+    val scalafmt: ModuleID = "com.lucidchart" % "sbt-scalafmt-coursier" % "1.7"
+    val scalastyle: ModuleID =
+      "org.scalastyle" %% "scalastyle-sbt-plugin" % "0.8.0"
+    val scoverage: ModuleID = "org.scoverage" % "sbt-scoverage" % "1.5.0"
+    val sonatype: ModuleID = "org.xerial.sbt" % "sbt-sonatype" % "2.0"
+    val wartRemover: ModuleID = "org.wartremover" % "sbt-wartremover" % "2.1.0"
+    val jsEngine: ModuleID = "com.typesafe.sbt" % "sbt-js-engine" % "1.1.4"
+    val web: ModuleID = "com.typesafe.sbt" % "sbt-web" % "1.3.0"
+  }
+
+  object ScalaKafkaClient {
+    val version = "0.10.2.0"
+
+    val akka: ModuleID =
+      "net.cakesolutions" %% "scala-kafka-client-akka" % version
+    val base: ModuleID = "net.cakesolutions" %% "scala-kafka-client" % version
+    val testkit: ModuleID =
+      "net.cakesolutions" %% "scala-kafka-client-testkit" % version
+  }
+
+  object Slf4j {
+    val version = "1.7.25"
+
+    val api: ModuleID = "org.slf4j" % "slf4j-api" % version
+    val jclOver: ModuleID = "org.slf4j" % "jcl-over-slf4j" % version
+    val julTo: ModuleID = "org.slf4j" % "jul-to-slf4j" % version
+    val log4jOver: ModuleID = "org.slf4j" % "log4j-over-slf4j" % version
+  }
+
+  object Webjars {
+    val angular: ModuleID = "org.webjars.bower" % "angularjs" % "1.6.3"
+    val angularLeaflet: ModuleID =
+      "org.webjars.bower" % "angular-leaflet-directive" % "0.10.0"
+    val angularSlider: ModuleID =
+      "org.webjars.bower" % "angular-bootstrap-slider" % "0.1.28"
+    val bootstrap: ModuleID = "org.webjars.bower" % "bootstrap" % "3.3.7"
+    val leaflet: ModuleID = "org.webjars.bower" % "leaflet" % "1.0.3"
+    val locator: ModuleID = "org.webjars" % "webjars-locator" % "0.26"
+    val seiyriaSlider: ModuleID =
+      "org.webjars.bower" % "seiyria-bootstrap-slider" % "9.7.2"
+  }
+}

@@ -3,6 +3,7 @@
 
 import java.net.URL
 
+import net.cakesolutions.CakePlatformDependencies
 import net.cakesolutions.CakePlatformKeys._
 import net.cakesolutions.CakePublishMavenPluginKeys._
 import net.cakesolutions.ReleaseNotesPluginKeys._
@@ -23,8 +24,8 @@ issueManagementProject := Some("SBTTesting")
 
 // TODO: CO-13: clean up this dependency maintenance nightmare
 libraryDependencies ++=
-  PlatformDependencies.akkaHttp :+
-    ("com.typesafe.akka" %% "akka-http-spray-json" % "10.0.5")
+  PlatformBundles.akkaHttp :+
+    (CakePlatformDependencies.Akka.Http.sprayJson)
 
 mainClass in Compile := Some("MockIssueManagementServer")
 

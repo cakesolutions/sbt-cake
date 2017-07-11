@@ -5,6 +5,7 @@
 // License: http://www.apache.org/licenses/LICENSE-2.0
 package net.cakesolutions
 
+import CakePlatformDependencies._
 import play.core.PlayVersion
 import sbt._
 import sbt.Keys._
@@ -15,143 +16,81 @@ import wartremover._
 /**
   * Library dependency keys that will be auto-imported when this plugin is
   * enabled on a project.
-  * TODO: CO-143: Ideally we should refactor all dependencies in a single place.
   */
 object CakePlatformKeys {
 
-  /**
-    * Versions of platform libraries. Anything project specific can be
-    * written explicitly in build.sbt and anything specific to a
-    * platform concept (below) can be written explicitly there.
-    *
-    * We have strict conflict resolution, so it'll catch any mismatches
-    * and force you to update your build.sbt
-    */
-  object Versions {
-    val akka = "2.4.18"
-    val akkaHttp = "10.0.5"
-    val gatling = "2.2.3"
-    val jackson = "2.8.7"
-    val kafkaClient = "0.10.2.0"
-    val netty4 = "4.0.45.Final"
-    val play = PlayVersion.current
-  }
-
   /** Convenient bundles for depending on platform/core libraries */
-  object PlatformDependencies {
+  object PlatformBundles {
 
     // WORKAROUND https://issues.apache.org/jira/browse/CASSANDRA-10984
     //            cassandra needs a subset of netty 4
     val cassandra: Seq[ModuleID] = {
-      Seq(
-        // Update attempted to 3.10, required unclear additional properties
-        // (cdc_raw_directory)
-        "org.apache.cassandra" % "cassandra-all" % "3.7"
-          exclude ("io.netty", "netty-all")
-      ) ++ Seq(
-        "io.netty" % "netty-buffer" % Versions.netty4,
-        "io.netty" % "netty-common" % Versions.netty4,
-        "io.netty" % "netty-transport" % Versions.netty4,
-        "io.netty" % "netty-transport-native-epoll" % Versions.netty4
-          classifier "linux-x86_64",
-        "io.netty" % "netty-handler" % Versions.netty4
+      Seq(cassandraAll exclude ("io.netty", "netty-all")) ++ Seq(
+        Netty4.buffer,
+        Netty4.common,
+        Netty4.transport,
+        Netty4.epoll classifier "linux-x86_64",
+        Netty4.handler
       )
     }
 
     val gatling: Seq[ModuleID] = {
-      Seq(
-        "io.gatling" % "gatling-app" % Versions.gatling,
-        "io.gatling.highcharts" % "gatling-charts-highcharts"
-          % Versions.gatling,
-        "io.gatling" % "gatling-test-framework" % Versions.gatling,
-        "io.gatling" % "gatling-http" % Versions.gatling
-      )
+      Seq(Gatling.app, Gatling.highcharts, Gatling.testkit, Gatling.http)
     }
 
     val angularBootstrap: Seq[ModuleID] = Seq(
-      "org.webjars.bower" % "bootstrap" % "3.3.7",
-      "org.webjars.bower" % "angularjs" % "1.6.3",
-      "org.webjars.bower" % "leaflet" % "1.0.3",
-      "org.webjars.bower" % "angular-leaflet-directive" % "0.10.0",
-      "org.webjars.bower" % "seiyria-bootstrap-slider" % "9.7.2",
-      "org.webjars.bower" % "angular-bootstrap-slider" % "0.1.28"
+      Webjars.bootstrap,
+      Webjars.angular,
+      Webjars.leaflet,
+      Webjars.angularLeaflet,
+      Webjars.seiyriaSlider,
+      Webjars.angularSlider
     )
 
-    val akka: Seq[ModuleID] = Seq(
-      "com.typesafe.akka" %% "akka-actor" % Versions.akka,
-      "com.typesafe.akka" %% "akka-testkit" % Versions.akka % Test
-    )
+    val akka: Seq[ModuleID] = Seq(Akka.actor, Akka.testkit % Test)
 
     val kafkaClient: Seq[ModuleID] = {
       Seq(
-        "net.cakesolutions" %% "scala-kafka-client" % Versions.kafkaClient,
-        "net.cakesolutions" %% "scala-kafka-client-akka" % Versions.kafkaClient,
-        "net.cakesolutions" %% "scala-kafka-client-testkit"
-          % Versions.kafkaClient % Test
+        ScalaKafkaClient.base,
+        ScalaKafkaClient.akka,
+        ScalaKafkaClient.testkit % Test
       )
     }
 
-    val akkaCluster: Seq[ModuleID] = Seq(
-      "com.typesafe.akka" %% "akka-cluster-sharding" % Versions.akka,
-      "com.typesafe.akka" %% "akka-cluster-tools" % Versions.akka,
-      "com.twitter" %% "chill-akka" % "0.9.2"
-    )
+    val akkaCluster: Seq[ModuleID] =
+      Seq(Akka.clusterSharding, Akka.clusterTools, Akka.chill)
 
     val akkaPersistence: Seq[ModuleID] = Seq(
-      "com.typesafe.akka" %% "akka-persistence" % Versions.akka,
-      "com.typesafe.akka" %% "akka-persistence-query-experimental"
-        % Versions.akka,
-      "com.typesafe.akka" %% "akka-persistence-cassandra" % "0.24"
+      Akka.persistence,
+      Akka.persistenceQuery,
+      Akka.persistenceCassandra
     ) ++ cassandra.map(_ % Test)
 
     val akkaHttp: Seq[ModuleID] = {
       Seq(
-        "com.typesafe.akka" %% "akka-http-core" % Versions.akkaHttp,
-        "com.typesafe.akka" %% "akka-http" % Versions.akkaHttp,
-        "com.typesafe.akka" %% "akka-http-testkit" % Versions.akkaHttp % Test,
-        "com.github.swagger-akka-http" %% "swagger-akka-http" % "0.9.1",
-        // 1.12+ is for play 2.6.x
-        "de.heikoseeberger" %% "akka-http-play-json" % "1.10.1",
-        "com.fasterxml.jackson.core" % "jackson-databind" % Versions.jackson,
-        "com.fasterxml.jackson.module" %% "jackson-module-scala"
-          % Versions.jackson
+        Akka.Http.core,
+        Akka.Http.base,
+        Akka.Http.testkit % Test,
+        swagger,
+        Jackson.databind,
+        Akka.playJson,
+        Jackson.scala
       )
     }
 
-    // a Setting (depends on other Settings), so call like `shapeless.value`
-    def shapeless: Def.Initialize[List[ModuleID]] = Def.setting {
-      val plugins = CrossVersion
-        .partialVersion(scalaVersion.value)
-        .collect {
-          case (2, 10) =>
-            compilerPlugin(
-              "org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.patch
-            )
-        }
-        .toList
-
-      "com.chuusai" %% "shapeless" % "2.3.2" :: plugins
-    }
-
     val logback: Seq[ModuleID] = Seq(
-      "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0",
-      "com.typesafe.akka" %% "akka-slf4j" % Versions.akka intransitive (),
-      "ch.qos.logback" % "logback-classic" % "1.2.3"
-    ) ++ Seq(
-      "org.slf4j" % "log4j-over-slf4j",
-      "org.slf4j" % "slf4j-api",
-      "org.slf4j" % "jul-to-slf4j",
-      "org.slf4j" % "jcl-over-slf4j"
-    ).map(_ % "1.7.25")
+      scalaLogging,
+      Akka.slf4j intransitive (),
+      logbackClassic,
+      Slf4j.log4jOver,
+      Slf4j.api,
+      Slf4j.julTo,
+      Slf4j.jclOver
+    )
 
     def testing(config: Configuration): Seq[ModuleID] =
-      Seq(
-        // janino 3.0.6 is not compatible and causes
-        // http://www.slf4j.org/codes.html#replay
-        "org.codehaus.janino" % "janino" % "2.7.8" % config,
-        "org.scalatest" %% "scalatest" % "3.0.3" % config,
-        "org.scalacheck" %% "scalacheck" % "1.13.5" % config
-      ) ++ logback.map(_ % config)
+      Seq(janino % config, scalatest % config, scalacheck % config) ++ logback
+        .map(_ % config)
   }
 
   /**
@@ -211,7 +150,7 @@ object CakePlatformPlugin extends AutoPlugin {
   override val projectSettings: Seq[Setting[_]] = Seq(
     dependencyOverrides ++= Set(
       // akka remoting only works on netty 3
-      "io.netty" % "netty" % "3.10.6.Final"
+      netty3
     ),
     // trust me, you don't ever want to get your stdlib versions out of sync...
     dependencyOverrides ++= Set(
@@ -222,10 +161,10 @@ object CakePlatformPlugin extends AutoPlugin {
       scalaOrganization.value % "scalap" % scalaVersion.value
     ),
     // logging should be available everywhere (opt out if you really must...)
-    libraryDependencies ++= PlatformDependencies.logback,
-    dependencyOverrides ++= PlatformDependencies.logback.toSet,
-    libraryDependencies += "com.typesafe" % "config" % "1.3.1",
-    libraryDependencies ++= PlatformDependencies.testing(Test),
+    libraryDependencies ++= PlatformBundles.logback,
+    dependencyOverrides ++= PlatformBundles.logback.toSet,
+    libraryDependencies += typesafeConfig,
+    libraryDependencies ++= PlatformBundles.testing(Test),
     // the naughty list
     excludeDependencies ++= Seq(
       // we don't want another
