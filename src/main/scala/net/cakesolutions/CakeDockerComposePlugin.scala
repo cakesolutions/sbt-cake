@@ -50,7 +50,7 @@ object CakeDockerComposePlugin extends AutoPlugin {
         yaml => Seq("-f", yaml.getCanonicalPath)
       )
     val result =
-      Process(Seq("docker-compose") ++ projectOverrides ++ Seq("up", "-d")).!
+      Process(Seq("docker-compose") ++ projectOverrides ++ Seq("down")).!
     if (result != 0) {
       throw new IllegalStateException(
         s"`docker-compose down` returned $result"
