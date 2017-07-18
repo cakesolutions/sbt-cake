@@ -34,8 +34,17 @@ object CakeDockerComposePlugin extends AutoPlugin {
       dockerComposeFiles.value.flatMap(
         yaml => Seq("-f", yaml.getCanonicalPath)
       )
+    val projectName =
+      sys.env
+        .get("DOCKER_COMPOSE_PROJECT_NAME")
+        .fold(Seq.empty[String])(name => Seq("-p", name))
     val result =
-      Process(Seq("docker-compose") ++ projectOverrides ++ Seq("up", "-d")).!
+      Process(
+        Seq("docker-compose") ++
+          projectName ++
+          projectOverrides ++
+          Seq("up", "-d")
+      ).!
     if (result != 0) {
       throw new IllegalStateException(
         s"`docker-compose up` returned $result (are you sure all image " +
@@ -49,9 +58,14 @@ object CakeDockerComposePlugin extends AutoPlugin {
       dockerComposeFiles.value.flatMap(
         yaml => Seq("-f", yaml.getCanonicalPath)
       )
+    val projectName =
+      sys.env
+        .get("DOCKER_COMPOSE_PROJECT_NAME")
+        .fold(Seq.empty[String])(name => Seq("-p", name))
     val result =
       Process(
         Seq("docker-compose") ++
+          projectName ++
           projectOverrides ++
           Seq("down", "--rmi", "all", "--volumes", "--remove-orphans")
       ).!

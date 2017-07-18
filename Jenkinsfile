@@ -6,6 +6,8 @@ pipeline {
   environment {
     // Ensure that build scripts recognise the environment they are running within
     CI = 'jenkins'
+    // Use the git SHA to gain some integration test isolation
+    DOCKER_COMPOSE_PROJECT_NAME = sh(returnStdout: true, script: "git rev-parse --verify HEAD").trim()
   }
 
   stages {

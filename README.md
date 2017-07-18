@@ -39,6 +39,14 @@ environment (e.g. Jenkins).
 
 Used by `CakePlatformPlugin` and `CakeStandardsPlugin`.
 
+## `DOCKER_COMPOSE_PROJECT_NAME`
+
+Setting of this environment variable defines the project name for Docker Compose. This environment variable is typically
+only set within a continuous integration (CI) environment - e.g. when the environment might be shared and some form of
+test isolation is required.
+
+Used by `CakeDockerComposePlugin`.
+
 ## `DOCKER_REPOSITORY`
 
 Setting of this environment variable defines which Docker repository that images will be published to. This environment
@@ -133,7 +141,8 @@ Enabling this plugin is a project provides:
 * build definable setting for a docker-compose project file
 * helper SBT tasks for manipulating and using Docker compose services.
 
-Any project that uses Docker and Docker Compose for its integration tests should enable this plugin.
+Any project that uses Docker and Docker Compose for its integration tests should enable this plugin. Setting the
+environment variable `DOCKER_COMPOSE_PROJECT_NAME` allows the default Docker Compose project name to be overridden.
 
 ### Plugin Configuration
 
