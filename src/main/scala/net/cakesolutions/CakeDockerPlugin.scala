@@ -19,7 +19,7 @@ object CakeDockerPlugin extends AutoPlugin {
   override def requires = DockerPlugin
   override def trigger = allRequirements
   override def projectSettings = Seq(
-    dockerBaseImage := "openjdk:8-jre-alpine",
+    dockerBaseImage := "openjdk:8-jre",
     dockerUpdateLatest := true,
     dockerRepository := None,
     packageName in Docker := name.value,
