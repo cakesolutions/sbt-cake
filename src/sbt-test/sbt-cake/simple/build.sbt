@@ -5,7 +5,7 @@ scalafmtOnCompile := true
 val logging = project
   .enablePlugins(BuildInfoPlugin)
 
-val engine = project.enablePlay
+val engine = project
   .enablePlugins(DockerPlugin, AshScriptPlugin)
   .settings(pipelineStages := Seq(digest, gzip))
   .dependsOn(logging)

@@ -6,7 +6,6 @@
 package net.cakesolutions
 
 import CakePlatformDependencies._
-import play.core.PlayVersion
 import sbt._
 import sbt.Keys._
 import wartremover._
@@ -73,7 +72,6 @@ object CakePlatformKeys {
         Akka.Http.testkit % Test,
         swagger,
         Jackson.databind,
-        Akka.playJson,
         Jackson.scala
       )
     }
@@ -89,41 +87,8 @@ object CakePlatformKeys {
     )
 
     def testing(config: Configuration): Seq[ModuleID] =
-      Seq(janino % config, scalatest % config, scalacheck % config) ++ logback
+      Seq(scalatest % config, scalacheck % config) ++ logback
         .map(_ % config)
-  }
-
-  /**
-    * Implicitly add extra methods to in scope Projects
-    *
-    * @param p project that Play application setting should be applied to
-    */
-  implicit class PlayOps(p: Project) {
-    import play.sbt._
-    import PlayImport.PlayKeys
-    import play.twirl.sbt.Import.TwirlKeys
-
-    /**
-      * Enable Play Scala plugin, SBT style layout and a default set of
-      * settings.
-      *
-      * @return project with Play settings and configuration applied
-      */
-    def enablePlay: Project =
-      p.enablePlugins(PlayScala)
-        // For consistency we prefer default SBT style layout
-        // https://www.playframework.com/documentation/2.5.x/Anatomy
-        .disablePlugins(PlayLayoutPlugin)
-        .settings(
-          // false positives in generated code
-          scalacOptions -= "-Ywarn-unused-import",
-          // lots of warts in generated code
-          wartremoverExcluded in Compile ++= routes.RoutesKeys.routes
-            .in(Compile)
-            .value,
-          PlayKeys.playMonitoredFiles ++=
-            (sourceDirectories in (Compile, TwirlKeys.compileTemplates)).value
-        )
   }
 }
 

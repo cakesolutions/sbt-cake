@@ -16,9 +16,6 @@ object CakePlatformDependencies {
   val guava: ModuleID = "com.google.guava" % "guava" % "19.0"
   val httpClient: ModuleID =
     "org.apache.httpcomponents" % "httpclient" % "4.3.6"
-  // janino 3.0.6 is not compatible and causes
-  // http://www.slf4j.org/codes.html#replay
-  val janino: ModuleID = "org.codehaus.janino" % "janino" % "2.7.8"
   // TODO: CO-68: remove JSR305 dependency when SBT moves away from Scala 2.10
   val jsr305: ModuleID = "com.google.code.findbugs" % "jsr305" % "3.0.2"
   val levelDbJni: ModuleID = "org.fusesource.leveldbjni" % "leveldbjni" % "1.7"
@@ -49,8 +46,6 @@ object CakePlatformDependencies {
       "com.typesafe.akka" %% "akka-persistence-cassandra" % "0.24"
     val persistenceQuery: ModuleID =
       "com.typesafe.akka" %% "akka-persistence-query-experimental" % version
-    val playJson: ModuleID =
-      "de.heikoseeberger" %% "akka-http-play-json" % "1.10.1"
     val slf4j: ModuleID = "com.typesafe.akka" %% "akka-slf4j" % version
     val testkit: ModuleID = "com.typesafe.akka" %% "akka-testkit" % version
 
@@ -113,15 +108,12 @@ object CakePlatformDependencies {
     val packager: ModuleID =
       "com.typesafe.sbt" % "sbt-native-packager" % "1.1.6"
     val pgp: ModuleID = "com.jsuereth" % "sbt-pgp" % "1.0.1"
-    val play: ModuleID = "com.typesafe.play" % "sbt-plugin" % "2.5.15"
     val scalafmt: ModuleID = "com.lucidchart" % "sbt-scalafmt-coursier" % "1.7"
     val scalastyle: ModuleID =
       "org.scalastyle" %% "scalastyle-sbt-plugin" % "0.8.0"
     val scoverage: ModuleID = "org.scoverage" % "sbt-scoverage" % "1.5.0"
     val sonatype: ModuleID = "org.xerial.sbt" % "sbt-sonatype" % "2.0"
     val wartRemover: ModuleID = "org.wartremover" % "sbt-wartremover" % "2.1.0"
-    val jsEngine: ModuleID = "com.typesafe.sbt" % "sbt-js-engine" % "1.1.4"
-    val web: ModuleID = "com.typesafe.sbt" % "sbt-web" % "1.3.0"
   }
 
   object ScalaKafkaClient {

@@ -52,7 +52,6 @@ scalacOptions in Compile ++= Seq("-feature", "-deprecation")
 addSbtPlugin(SbtDependencies.dynver)
 addSbtPlugin(SbtDependencies.buildInfo)
 addSbtPlugin(SbtDependencies.pgp)
-addSbtPlugin(SbtDependencies.play)
 addSbtPlugin(SbtDependencies.digest)
 addSbtPlugin(SbtDependencies.git)
 addSbtPlugin(SbtDependencies.gzip)
@@ -73,9 +72,7 @@ dependencyOverrides ++= Set(
   jsr305,
   guava,
   typesafeConfig,
-  SbtDependencies.jsEngine,
   SbtDependencies.packager,
-  SbtDependencies.web,
   ApacheCommons.codec,
   ApacheCommons.logging,
   ApacheCommons.compress,
