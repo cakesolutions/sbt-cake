@@ -18,7 +18,11 @@ object CakeDockerComposePlugin extends AutoPlugin {
   private val dockerComposeUpTask: Def.Initialize[Task[Unit]] = Def.task {
     val _ = dockerComposeImageTask.value
     val input = dockerComposeFile.value.getCanonicalPath
-    val res = s"docker-compose -f $input up -d".!
+    val projectName =
+      sys.env
+        .get("DOCKER_COMPOSE_PROJECT_NAME")
+        .fold("")(name => s"-p $name")
+    val res = s"docker-compose $projectName -f $input up -d".!
     if (res != 0)
       throw new IllegalStateException(
         s"docker-compose up returned $res (are you sure all image deps are in build.sbt?)"
@@ -27,7 +31,11 @@ object CakeDockerComposePlugin extends AutoPlugin {
 
   private val dockerComposeDownTask: Def.Initialize[Task[Unit]] = Def.task {
     val input = dockerComposeFile.value.getCanonicalPath
-    val res = s"docker-compose -f $input down".!
+    val projectName =
+      sys.env
+        .get("DOCKER_COMPOSE_PROJECT_NAME")
+        .fold("")(name => s"-p $name")
+    val res = s"docker-compose $projectName -f $input down".!
     if (res != 0)
       throw new IllegalStateException(s"docker-compose down returned $res")
   }
