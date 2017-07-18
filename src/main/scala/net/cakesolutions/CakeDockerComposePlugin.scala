@@ -43,7 +43,8 @@ object CakeDockerComposePlugin extends AutoPlugin {
         Seq("docker-compose") ++
           projectName ++
           projectOverrides ++
-          Seq("up", "-d")
+          Seq("up", "-d") ++
+          dockerComposeUpExtras.value
       ).!
     if (result != 0) {
       throw new IllegalStateException(
@@ -67,7 +68,8 @@ object CakeDockerComposePlugin extends AutoPlugin {
         Seq("docker-compose") ++
           projectName ++
           projectOverrides ++
-          Seq("down", "--rmi", "all", "--volumes", "--remove-orphans")
+          Seq("down", "--rmi", "all", "--volumes") ++
+          dockerComposeDownExtras.value
       ).!
     if (result != 0) {
       throw new IllegalStateException(
@@ -105,7 +107,9 @@ object CakeDockerComposePlugin extends AutoPlugin {
     dockerComposeFiles := Seq(file("docker/docker-compose.yml")),
     dockerComposeImageTask := (publishLocal in Docker).value,
     dockerComposeUp := dockerComposeUpTask.value,
+    dockerComposeUpExtras := Seq("--remove-orphans"),
     dockerComposeDown := dockerComposeDownTask.value,
+    dockerComposeDownExtras := Seq("--remove-orphans"),
     dockerRemove := dockerRemoveTask.value,
     externalBuildTools ++=
       Seq(
@@ -135,6 +139,24 @@ object CakeDockerComposePluginKeys {
   val dockerComposeFiles: SettingKey[Seq[File]] =
     settingKey[Seq[File]](
       "docker-compose YAML files to use in dockerComposeUp"
+    )
+
+  /**
+    * Setting key defining extra arguments that will be added to the
+    * dockerComposeUp command
+    */
+  val dockerComposeUpExtras: SettingKey[Seq[String]] =
+    settingKey[Seq[String]](
+      "Additional arguments for the dockerComposeUp task"
+    )
+
+  /**
+    * Setting key defining extra arguments that will be added to the
+    * dockerComposeDown command
+    */
+  val dockerComposeDownExtras: SettingKey[Seq[String]] =
+    settingKey[Seq[String]](
+      "Additional arguments for the dockerComposeDown task"
     )
 
   /**

@@ -148,7 +148,11 @@ environment variable `DOCKER_COMPOSE_PROJECT_NAME` allows the default Docker Com
 
 The following configuration settings can be modified in projects that enable this plugin:
 * `dockerComposeFile` (`docker/<project module>.yml` by default) - defines the YAML file to be used by Docker Compose
-  commands.
+  commands
+* `dockerComposeUpExtras` (`Seq("--remove-orphans")` by default) - defines extra command line arguments that will be
+  appended to the `dockerComposeUp` task
+* `dockerComposeDownExtras` (`Seq("--remove-orphans")` by default) - defines extra command line arguments that will be
+  appended to the `dockerComposeDown` task.
 
 ### SBT Tasks
 
