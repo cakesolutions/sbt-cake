@@ -157,6 +157,7 @@ The following configuration settings can be modified in projects that enable thi
 ### SBT Tasks
 
 The following SBT tasks are enabled:
+* `dockerComposeConfigCheck` - validates correctness of the docker-compose YAML configuration
 * `dockerComposeDown` - running docker-compose services will be stopped and removed
 * `dockerComposeImageTask` - built docker images will be locally published
 * `dockerComposeUp` - Docker Compose services (as defined in a Docker Compose YAML file) will be launched

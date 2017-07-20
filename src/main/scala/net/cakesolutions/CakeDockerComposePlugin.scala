@@ -28,6 +28,31 @@ object CakeDockerComposePlugin extends AutoPlugin {
   val autoImport = CakeDockerComposePluginKeys
   import autoImport._
 
+  private val dockerComposeConfigCheckTask: Def.Initialize[Task[Unit]] =
+    Def.task {
+      val projectOverrides =
+        dockerComposeFiles.value.flatMap(
+          yaml => Seq("-f", yaml.getCanonicalPath)
+        )
+      val projectName =
+        sys.env
+          .get("DOCKER_COMPOSE_PROJECT_NAME")
+          .fold(Seq.empty[String])(name => Seq("-p", name))
+      val result =
+        Process(
+          Seq("docker-compose") ++
+            projectName ++
+            projectOverrides ++
+            Seq("config", "-q") ++
+            dockerComposeUpExtras.value
+        ).!
+      if (result != 0) {
+        throw new IllegalStateException(
+          "Failed to validate docker-compose YAML configuration"
+        )
+      }
+    }
+
   private val dockerComposeUpTask: Def.Initialize[Task[Unit]] = Def.task {
     val _ = dockerComposeImageTask.value
     val projectOverrides =
@@ -106,6 +131,7 @@ object CakeDockerComposePlugin extends AutoPlugin {
   override val projectSettings: Seq[Setting[_]] = Seq(
     dockerComposeFiles := Seq(file("docker/docker-compose.yml")),
     dockerComposeImageTask := (publishLocal in Docker).value,
+    dockerComposeConfigCheck := dockerComposeConfigCheckTask.value,
     dockerComposeUp := dockerComposeUpTask.value,
     dockerComposeUpExtras := Seq("--remove-orphans"),
     dockerComposeDown := dockerComposeDownTask.value,
@@ -158,6 +184,12 @@ object CakeDockerComposePluginKeys {
     settingKey[Seq[String]](
       "Additional arguments for the dockerComposeDown task"
     )
+
+  /**
+    * Task defining how we will validate the docker-compose YAML files
+    */
+  val dockerComposeConfigCheck: TaskKey[Unit] =
+    taskKey[Unit]("Validate the docker-compose YAML file")
 
   /**
     * Task defining how docker images will be locally published
