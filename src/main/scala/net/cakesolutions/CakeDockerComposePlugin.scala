@@ -43,8 +43,7 @@ object CakeDockerComposePlugin extends AutoPlugin {
           Seq("docker-compose") ++
             projectName ++
             projectOverrides ++
-            Seq("config", "-q") ++
-            dockerComposeUpExtras.value
+            Seq("config", "-q")
         ).!
       if (result != 0) {
         throw new IllegalStateException(
