@@ -32,7 +32,7 @@ object CakePlatformDependencies {
   val typesafeConfig: ModuleID = "com.typesafe" % "config" % "1.3.1"
 
   object Akka {
-    val version = "2.4.18"
+    val version = "2.5.3"
 
     val actor: ModuleID = "com.typesafe.akka" %% "akka-actor" % version
     val chill: ModuleID = "com.twitter" %% "chill-akka" % "0.9.2"
@@ -43,14 +43,14 @@ object CakePlatformDependencies {
     val persistence: ModuleID =
       "com.typesafe.akka" %% "akka-persistence" % version
     val persistenceCassandra: ModuleID =
-      "com.typesafe.akka" %% "akka-persistence-cassandra" % "0.24"
+      "com.typesafe.akka" %% "akka-persistence-cassandra" % "0.54"
     val persistenceQuery: ModuleID =
       "com.typesafe.akka" %% "akka-persistence-query-experimental" % version
     val slf4j: ModuleID = "com.typesafe.akka" %% "akka-slf4j" % version
     val testkit: ModuleID = "com.typesafe.akka" %% "akka-testkit" % version
 
     object Http {
-      val version = "10.0.5"
+      val version = "10.0.9"
 
       val base: ModuleID = "com.typesafe.akka" %% "akka-http" % version
       val core: ModuleID = "com.typesafe.akka" %% "akka-http-core" % version
