@@ -20,7 +20,7 @@ object CakeJavaAppPlugin extends AutoPlugin {
     com.typesafe.sbt.packager.archetypes.JavaServerAppPackaging
 
   /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
-  override def trigger: PluginTrigger = allRequirements
+  override def trigger: PluginTrigger = noTrigger
 
   /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
   override def projectSettings: Seq[Setting[_]] = Seq(

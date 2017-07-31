@@ -19,7 +19,7 @@ object CakeDockerPlugin extends AutoPlugin {
   override def requires: Plugins = CakeBuildInfoPlugin && DockerPlugin
 
   /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
-  override def trigger: PluginTrigger = allRequirements
+  override def trigger: PluginTrigger = noTrigger
 
   /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
   override def projectSettings: Seq[Setting[_]] = Seq(

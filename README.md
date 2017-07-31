@@ -94,6 +94,8 @@ examples).
 
 Plugin requirements: `BuildInfoPlugin`
 
+This plugin is auto-loaded if all requirements are loaded.
+
 Assumes that `git` is installed. Used to configure and load the `BuildInfo` object at runtime. This object
 contains information regarding the build such as the git commit hash, etc.
 
@@ -117,6 +119,8 @@ ensure that all required build tools (e.g. `git`, `docker`, etc.) are installed.
 
 Plugin requirements: `DynVerPlugin`
 
+This plugin is auto-loaded if all requirements are loaded.
+
 Enabling this plugin in a project provides:
 * standard build and compiler settings
 * version setting using git via the [SBT Dynamic Versioning plugin](https://github.com/dwijnand/sbt-dynver).
@@ -136,6 +140,8 @@ See [Tasks](https://github.com/dwijnand/sbt-dynver#tasks) for information on the
 ## `CakeDockerComposePlugin`: Docker Compose Build Helper
 
 Plugin requirements: `CakeDockerPlugin` and `DockerPlugin`
+
+This plugin needs to be explicitly enabled in order to be loaded.
 
 Enabling this plugin is a project provides:
 * build definable setting for a docker-compose project file
@@ -167,6 +173,8 @@ The following SBT tasks are enabled:
 
 Plugin requirements: `CakeBuildInfoPlugin` and `DockerPlugin`
 
+This plugin needs to be explicitly enabled in order to be loaded.
+
 Enabling this plugin in a project configures how Docker containers may be built. See
 [Docker Plugin](http://www.scala-sbt.org/sbt-native-packager/formats/docker.html) for more information. This plugin is
 typically used alongside the `CakeJavaAppPlugin`. 
@@ -187,6 +195,8 @@ The expected suite of SBT Native Packager Docker tasks are enabled (e.g. `docker
 ## `CakeJavaAppPlugin`: Java Application Server Packaging
 
 Plugin requirements: `JavaServerAppPackaging`
+
+This plugin needs to be explicitly enabled in order to be loaded.
 
 Enabling this plugin in a project configures how JVM applications may be built. See
 [Java Application Archetype](http://www.scala-sbt.org/sbt-native-packager/archetypes/java_app/) for more information.
@@ -222,6 +232,8 @@ No special tasks are enabled for this plugin.
 ## `CakePublishMavenPlugin`: Artifact Publishing
 
 Plugin requirements: `DynVerPlugin`
+
+This plugin needs to be explicitly enabled in order to be loaded.
 
 Enabling this plugin provides support for dynamic versioning of project code and for tag based release strategies.
 However, for mono project repositories, only one versioned set of artifacts may be published with this plugin.
@@ -289,6 +301,8 @@ The following are internal SBT plugin tasks and are not normally expected to be 
 
 Plugin requirements: `CakeBuildPlugin` and `DynVerPlugin`
 
+This plugin is auto-loaded if all requirements are loaded.
+
 Enabling this plugin in a project configures [wartremover](https://github.com/wartremover/wartremover), along with a
 standard suite of compiler compatibility flags.
 
@@ -315,6 +329,8 @@ No special tasks are enabled for this plugin.
 ## `ReleaseNotesPlugin`: Publish Release Notes to Project Management Tools
 
 Plugin requirements: `CakePublishMavenPlugin` and `CakeBuildInfoPlugin`
+
+This plugin needs to be explicitly enabled in order to be loaded.
 
 Enabling this plugin in a project allows release notes to be automatically generated and submitted to an issue
 management tool such as Jira. This allows the issue management tool to be the single source of truth regarding the
