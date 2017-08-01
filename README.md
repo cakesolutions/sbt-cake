@@ -220,6 +220,8 @@ The expected suite of SBT Native Packager Java application tasks are enabled (e.
 
 Plugin requirements: `CakeStandardsPlugin`, `CakeBuildPlugin` and `DynVerPlugin`
 
+This plugin needs to be explicitly enabled in order to be loaded.
+
 Enabling this plugin in a project provides access to a standard set of core library dependency keys. All projects should
 enable this plugin (either directly or indirectly).
 

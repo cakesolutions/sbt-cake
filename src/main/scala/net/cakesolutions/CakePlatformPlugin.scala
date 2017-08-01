@@ -102,7 +102,7 @@ object CakePlatformPlugin extends AutoPlugin {
   override def requires: Plugins = CakeStandardsPlugin
 
   /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
-  override def trigger: PluginTrigger = allRequirements
+  override def trigger: PluginTrigger = noTrigger
 
   /**
     * When this plugin is enabled, {{autoImport}} defines a wildcard import for
