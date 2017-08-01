@@ -67,7 +67,7 @@ object CakeDockerComposePlugin extends AutoPlugin {
         Seq("docker-compose") ++
           projectName ++
           projectOverrides ++
-          Seq("up", "-d") ++
+          Seq("up", dockerComposeUpLaunchStyle.value) ++
           dockerComposeUpExtras.value
       ).!
     if (result != 0) {
@@ -132,6 +132,7 @@ object CakeDockerComposePlugin extends AutoPlugin {
     dockerComposeImageTask := (publishLocal in Docker).value,
     dockerComposeConfigCheck := dockerComposeConfigCheckTask.value,
     dockerComposeUp := dockerComposeUpTask.value,
+    dockerComposeUpLaunchStyle := "-d",
     dockerComposeUpExtras := Seq("--remove-orphans"),
     dockerComposeDown := dockerComposeDownTask.value,
     dockerComposeDownExtras := Seq("--remove-orphans"),
@@ -164,6 +165,17 @@ object CakeDockerComposePluginKeys {
   val dockerComposeFiles: SettingKey[Seq[File]] =
     settingKey[Seq[File]](
       "docker-compose YAML files to use in dockerComposeUp"
+    )
+
+  /**
+    * Setting key defining the type or style of docker-compose launching. This
+    * setting can be used to define if containers are launched in daemon mode
+    * or aborting if any container exits (with or without the exit code of a
+    * specific service).
+    */
+  val dockerComposeUpLaunchStyle: SettingKey[String] =
+    settingKey[String](
+      "Launch style for the dockerComposeUp task"
     )
 
   /**
@@ -200,7 +212,7 @@ object CakeDockerComposePluginKeys {
     * Task defining how docker-compose services will be launched
     */
   val dockerComposeUp: TaskKey[Unit] =
-    taskKey[Unit]("Runs `docker-compose -f <file> up -d` for the scope")
+    taskKey[Unit]("Runs `docker-compose -f <file> up` for the scope")
 
   /**
     * Task defining how running docker-compose services will be stopped and
