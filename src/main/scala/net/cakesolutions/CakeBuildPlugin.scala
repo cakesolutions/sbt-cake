@@ -109,6 +109,9 @@ object CakeBuildKeys {
     parallelExecution := true,
     javaOptions ~= (_.filterNot(_.startsWith("-Dlogback.configurationFile"))),
     javaOptions += s"-Dlogback.configurationFile=${(baseDirectory in ThisBuild).value}/logback-${configuration.value}.xml",
+    // play overrides the slf4j / logback config with their own magic
+    // https://www.playframework.com/documentation/2.6.x/SettingsLogger#Using--Dlogger.file
+    javaOptions += s"-Dlogger.file=${(baseDirectory in ThisBuild).value}/logback-${configuration.value}.xml",
     testForkedParallel := true,
     testGrouping := {
       val opts = ForkOptions(
