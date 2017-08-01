@@ -99,7 +99,6 @@ object CakePlatformDependencies {
 
   object SbtDependencies {
     val buildInfo: ModuleID = "com.eed3si9n" % "sbt-buildinfo" % "0.7.0"
-    val coursier: ModuleID = "io.get-coursier" % "sbt-coursier" % "1.0.0-RC6"
     val digest: ModuleID = "com.typesafe.sbt" % "sbt-digest" % "1.1.1"
     val dynver: ModuleID = "com.dwijnand" % "sbt-dynver" % "1.2.0"
     val git: ModuleID = "com.typesafe.sbt" % "sbt-git" % "0.9.2"
@@ -108,12 +107,20 @@ object CakePlatformDependencies {
     val packager: ModuleID =
       "com.typesafe.sbt" % "sbt-native-packager" % "1.1.6"
     val pgp: ModuleID = "com.jsuereth" % "sbt-pgp" % "1.0.1"
-    val scalafmt: ModuleID = "com.lucidchart" % "sbt-scalafmt-coursier" % "1.7"
+    val scalafmt: ModuleID = "com.lucidchart" % "sbt-scalafmt-coursier" % "1.9"
     val scalastyle: ModuleID =
       "org.scalastyle" %% "scalastyle-sbt-plugin" % "0.8.0"
     val scoverage: ModuleID = "org.scoverage" % "sbt-scoverage" % "1.5.0"
     val sonatype: ModuleID = "org.xerial.sbt" % "sbt-sonatype" % "2.0"
     val wartRemover: ModuleID = "org.wartremover" % "sbt-wartremover" % "2.1.0"
+
+    object Coursier {
+      val version = "1.0.0-RC8"
+
+      val sbt: ModuleID = "io.get-coursier" % "sbt-coursier" % version
+      val cache: ModuleID = "io.get-coursier" %% "coursier-cache" % version
+      val core: ModuleID = "io.get-coursier" %% "coursier" % version
+    }
   }
 
   object ScalaKafkaClient {
