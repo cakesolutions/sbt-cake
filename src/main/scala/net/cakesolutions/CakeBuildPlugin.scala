@@ -135,7 +135,8 @@ object CakeBuildKeys {
           inConfig(FunctionalTest)(
             Defaults.testSettings ++ sensibleTestSettings ++ scalafmtSettings ++ dockerComposeSettings ++ Seq(
               wartremoverWarnings in compile := (wartremoverWarnings in (Test, compile)).value,
-              dockerHealth := dockerHealthTask.value
+              dockerHealth := dockerHealthTask.value,
+              dockerComposeImageTask := (publishLocal in Docker).value
             )
           )
         )
