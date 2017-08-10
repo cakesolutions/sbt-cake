@@ -14,6 +14,7 @@ import sbt.Keys._
 
 import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport._
 import scoverage.ScoverageKeys._
+import wartremover._
 
 /**
  * Common plugin that sets up common variables and build settings such
@@ -97,10 +98,47 @@ object CakeBuildPlugin extends AutoPlugin {
 }
 
 object CakeBuildKeys {
+
+  /**
+   * As opposed to IntegrationTest, FunctionalTest is designed to be
+   * run in a prod-like environment to validate functional
+   * requirements only. These tests can be run against mock
+   * environments for faster development cycles.
+   */
+  val FunctionalTest = config("fun") extend (Test)
+
+  import com.typesafe.sbt.SbtNativePackager._
+  import CakeDockerComposePlugin._
+  import CakeDockerHealthPlugin._
+  import CakeDockerComposePluginKeys._
+  import CakeDockerHealthPluginKeys._
+
   implicit class IntegrationTestOps(p: Project) {
     def enableIntegrationTests: Project = p
       .configs(IntegrationTest)
-      .settings(inConfig(IntegrationTest)(Defaults.testSettings ++ sensibleTestSettings ++ scalafmtSettings))
+      .enablePlugins(CakeDockerComposePlugin, CakeDockerHealthPlugin)
+      .settings(
+        inConfig(IntegrationTest)(
+          Defaults.testSettings ++ sensibleTestSettings ++ scalafmtSettings ++ dockerComposeSettings ++ Seq(
+            wartremoverWarnings in compile := (wartremoverWarnings in (Test, compile)).value,
+            dockerHealth := dockerHealthTask.value
+          )
+        )
+      )
+  }
+
+  implicit class FunctionalTestOps(p: Project) {
+    def enableFunctionalTests: Project =
+      p.configs(FunctionalTest)
+        .enablePlugins(CakeDockerComposePlugin, CakeDockerHealthPlugin)
+        .settings(
+          inConfig(FunctionalTest)(
+            Defaults.testSettings ++ sensibleTestSettings ++ scalafmtSettings ++ dockerComposeSettings ++ Seq(
+              wartremoverWarnings in compile := (wartremoverWarnings in (Test, compile)).value,
+              dockerHealth := dockerHealthTask.value
+            )
+          )
+        )
   }
 
   // WORKAROUND https://github.com/sbt/sbt/issues/2534

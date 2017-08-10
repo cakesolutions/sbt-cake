@@ -10,8 +10,12 @@ val engine = project.enablePlay
   )
   .dependsOn(logging)
 
-val performance = project.enableIntegrationTests
+val performance = project
+  .enableIntegrationTests
+  .enableFunctionalTests
   .enablePlugins(DockerPlugin, AshScriptPlugin)
   .settings(
-    libraryDependencies ++= deps.Gatling
+    libraryDependencies ++= deps.Gatling,
+    dockerHealthEndpoint in IntegrationTest := "wibble",
+    dockerHealthEndpoint in FunctionalTest := "wobble"
   )

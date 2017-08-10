@@ -14,7 +14,7 @@ object CakeDockerHealthPlugin extends AutoPlugin {
 
   import autoImport._
 
-  private val dockerHealthTask: Def.Initialize[Task[Unit]] = Def.task {
+  val dockerHealthTask: Def.Initialize[Task[Unit]] = Def.task {
     val url = new URL(dockerHealthEndpoint.value)
 
     def readLinesURLWithWait = {
@@ -39,7 +39,6 @@ object CakeDockerHealthPlugin extends AutoPlugin {
   }
 
   override val projectSettings = Seq(
-    dockerHealth := dockerHealthTask.value,
     dockerHealthInterval := 1.second,
     dockerHealthRetries := 10
   )

@@ -15,7 +15,7 @@ object CakeDockerComposePlugin extends AutoPlugin {
   val autoImport = CakeDockerComposePluginKeys
   import autoImport._
 
-  private val dockerComposeUpTask: Def.Initialize[Task[Unit]] = Def.task {
+  val dockerComposeUpTask: Def.Initialize[Task[Unit]] = Def.task {
     val _ = dockerComposeImageTask.value
     val input = dockerComposeFile.value.getCanonicalPath
     val projectName =
@@ -29,7 +29,7 @@ object CakeDockerComposePlugin extends AutoPlugin {
       )
   }
 
-  private val dockerComposeDownTask: Def.Initialize[Task[Unit]] = Def.task {
+  val dockerComposeDownTask: Def.Initialize[Task[Unit]] = Def.task {
     val input = dockerComposeFile.value.getCanonicalPath
     val projectName =
       sys.env
@@ -40,7 +40,7 @@ object CakeDockerComposePlugin extends AutoPlugin {
       throw new IllegalStateException(s"docker-compose down returned $res")
   }
 
-  private val dockerRemoveTask: Def.Initialize[Task[Unit]] = Def.task {
+  val dockerRemoveTask: Def.Initialize[Task[Unit]] = Def.task {
     val image = (name in Docker).value
     val repository = dockerRepository.value match {
       case None => image
@@ -67,13 +67,17 @@ object CakeDockerComposePlugin extends AutoPlugin {
     dockerRepository := sys.env
       .get("DOCKER_REPOSITORY")
       .orElse(Some((name in ThisBuild).value)),
-    dockerComposeFile := file(s"docker/${name.value}.yml"),
-    dockerComposeImageTask := (publishLocal in Docker).value,
-    dockerComposeUp := dockerComposeUpTask.value,
-    dockerComposeDown := dockerComposeDownTask.value,
     dockerRemove := dockerRemoveTask.value
   )
 
+  // manually added per test inConfig
+  def dockerComposeSettings = Seq(
+    dockerComposeImageTask := {}
+,
+    dockerComposeUp := dockerComposeUpTask.value,
+    dockerComposeDown := dockerComposeDownTask.value,
+    dockerComposeFile := file(s"docker/${name.value}-${configuration.value}.yml")
+  )
 }
 
 object CakeDockerComposePluginKeys {
