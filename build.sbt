@@ -56,7 +56,7 @@ addSbtPlugin(SbtDependencies.digest)
 addSbtPlugin(SbtDependencies.git)
 addSbtPlugin(SbtDependencies.gzip)
 addSbtPlugin(SbtDependencies.packager)
-addSbtPlugin(SbtDependencies.Coursier.sbt)
+//addSbtPlugin(SbtDependencies.Coursier.sbt)
 addSbtPlugin(SbtDependencies.scoverage)
 addSbtPlugin(SbtDependencies.wartRemover)
 // The following plugin is otherwise known as neo-sbt-scalafmt
@@ -72,8 +72,8 @@ dependencyOverrides ++= Set(
   jsr305,
   guava,
   typesafeConfig,
-  SbtDependencies.Coursier.cache,
-  SbtDependencies.Coursier.core,
+//  SbtDependencies.Coursier.cache,
+//  SbtDependencies.Coursier.core,
   SbtDependencies.packager,
   ApacheCommons.codec,
   ApacheCommons.logging,
