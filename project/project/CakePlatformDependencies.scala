@@ -101,13 +101,13 @@ object CakePlatformDependencies {
     val buildInfo: ModuleID = "com.eed3si9n" % "sbt-buildinfo" % "0.7.0"
     val digest: ModuleID = "com.typesafe.sbt" % "sbt-digest" % "1.1.1"
     val dynver: ModuleID = "com.dwijnand" % "sbt-dynver" % "1.2.0"
-    val git: ModuleID = "com.typesafe.sbt" % "sbt-git" % "0.9.2"
+    val git: ModuleID = "com.typesafe.sbt" % "sbt-git" % "0.9.3"
     val gzip: ModuleID = "com.typesafe.sbt" % "sbt-gzip" % "1.0.0"
     val header: ModuleID = "de.heikoseeberger" % "sbt-header" % "2.0.0"
     val packager: ModuleID =
-      "com.typesafe.sbt" % "sbt-native-packager" % "1.1.6"
+      "com.typesafe.sbt" % "sbt-native-packager" % "1.2.1"
     val pgp: ModuleID = "com.jsuereth" % "sbt-pgp" % "1.0.1"
-    val scalafmt: ModuleID = "com.lucidchart" % "sbt-scalafmt-coursier" % "1.9"
+    val scalafmt: ModuleID = "com.lucidchart" % "sbt-scalafmt-coursier" % "1.10"
     val scalastyle: ModuleID =
       "org.scalastyle" %% "scalastyle-sbt-plugin" % "0.8.0"
     val scoverage: ModuleID = "org.scoverage" % "sbt-scoverage" % "1.5.0"
@@ -115,7 +115,7 @@ object CakePlatformDependencies {
     val wartRemover: ModuleID = "org.wartremover" % "sbt-wartremover" % "2.1.0"
 
     object Coursier {
-      val version = "1.0.0-RC8"
+      val version = "1.0.0-RC10"
 
       val sbt: ModuleID = "io.get-coursier" % "sbt-coursier" % version
       val cache: ModuleID = "io.get-coursier" %% "coursier-cache" % version
