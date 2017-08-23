@@ -16,7 +16,7 @@ import sbt.Keys._
 object CakeDockerComposePlugin extends AutoPlugin {
 
   /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
-  override def requires: Plugins = CakeBuildInfoPlugin && CakeDockerPlugin
+  override def requires: Plugins = CakeBuildInfoPlugin
 
   /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
   override def trigger: PluginTrigger = noTrigger
@@ -102,30 +102,6 @@ object CakeDockerComposePlugin extends AutoPlugin {
     }
   }
 
-  private val dockerRemoveTask: Def.Initialize[Task[Unit]] = Def.task {
-    val image = (name in Docker).value
-    val repository = dockerRepository.value match {
-      case None =>
-        image
-      case Some(repo) =>
-        s"$repo/$image"
-    }
-    val lines = "docker images".!!.split("\\n").toList
-    val Line = "^([^ ]+)[ ]+([^ ]+)[ ]+([^ ]+)[ ]+.*$".r
-    val ids = lines.collect {
-      case Line(repo, tag, id) if repo == repository =>
-        id
-    }
-    // only need to delete the first one (they are aliases, subsequent
-    // deletes fail)
-    ids.headOption.foreach { id =>
-      val res = s"docker rmi -f $id".!
-      if (res != 0) {
-        throw new IllegalStateException(s"`docker rmi -f $id` returned $res")
-      }
-    }
-  }
-
   /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
   override val projectSettings: Seq[Setting[_]] = Seq(
     dockerComposeFiles := Seq(file("docker/docker-compose.yml")),
@@ -136,7 +112,6 @@ object CakeDockerComposePlugin extends AutoPlugin {
     dockerComposeUpExtras := Seq("--remove-orphans"),
     dockerComposeDown := dockerComposeDownTask.value,
     dockerComposeDownExtras := Seq("--remove-orphans"),
-    dockerRemove := dockerRemoveTask.value,
     externalBuildTools ++=
       Seq(
         (
@@ -220,12 +195,4 @@ object CakeDockerComposePluginKeys {
     */
   val dockerComposeDown: TaskKey[Unit] =
     taskKey[Unit]("Runs `docker-compose -f <file> down` for the scope")
-
-  /**
-    * Task defining how docker images will be force removed
-    */
-  val dockerRemove: TaskKey[Unit] =
-    taskKey[Unit](
-      "Runs `docker rmi -f <ids>` for the images associated to the scope"
-    )
 }
