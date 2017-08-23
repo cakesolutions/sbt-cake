@@ -16,7 +16,7 @@ import sbt.Keys._
 object CakeDockerComposePlugin extends AutoPlugin {
 
   /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
-  override def requires: Plugins = CakeBuildInfoPlugin && CakeDockerPlugin
+  override def requires: Plugins = CakeBuildInfoPlugin
 
   /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
   override def trigger: PluginTrigger = noTrigger
