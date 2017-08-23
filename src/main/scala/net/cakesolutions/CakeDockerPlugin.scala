@@ -58,7 +58,6 @@ object CakeDockerPlugin extends AutoPlugin {
     dockerRemove := dockerRemoveTask.value
   )
 
-
   private val dockerRemoveTask: Def.Initialize[Task[Unit]] = Def.task {
     val image = (name in Docker).value
     val repository = dockerRepository.value match {
