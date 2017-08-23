@@ -15,6 +15,13 @@ object CakeDockerPlugin extends AutoPlugin {
   import com.typesafe.sbt.packager.Keys._
   import com.typesafe.sbt.packager.docker._
 
+  /**
+    * When this plugin is enabled, {{autoImport}} defines a wildcard import for
+    * set, eval, and .sbt files.
+    */
+  val autoImport = CakeDockerPluginKeys
+  import autoImport._
+
   /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
   override def requires: Plugins = CakeBuildInfoPlugin && DockerPlugin
 
@@ -47,6 +54,46 @@ object CakeDockerPlugin extends AutoPlugin {
           }
 
       Cmd("LABEL", labelArguments.mkString(" "))
-    }
+    },
+    dockerRemove := dockerRemoveTask.value
   )
+
+
+  private val dockerRemoveTask: Def.Initialize[Task[Unit]] = Def.task {
+    val image = (name in Docker).value
+    val repository = dockerRepository.value match {
+      case None =>
+        image
+      case Some(repo) =>
+        s"$repo/$image"
+    }
+    val lines = "docker images".!!.split("\\n").toList
+    val Line = "^([^ ]+)[ ]+([^ ]+)[ ]+([^ ]+)[ ]+.*$".r
+    val ids = lines.collect {
+      case Line(repo, tag, id) if repo == repository =>
+        id
+    }
+    // only need to delete the first one (they are aliases, subsequent
+    // deletes fail)
+    ids.headOption.foreach { id =>
+      val res = s"docker rmi -f $id".!
+      if (res != 0) {
+        throw new IllegalStateException(s"`docker rmi -f $id` returned $res")
+      }
+    }
+  }
+}
+
+/**
+  * Cake docker settings
+  */
+object CakeDockerPluginKeys {
+
+  /**
+    * Task defining how docker images will be force removed
+    */
+  val dockerRemove: TaskKey[Unit] =
+    taskKey[Unit](
+      "Runs `docker rmi -f <ids>` for the images associated to the scope"
+    )
 }
