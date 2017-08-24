@@ -50,7 +50,7 @@ object CakeDockerPlugin extends AutoPlugin {
         dockerArgList
           .map {
             case (key, value) =>
-              s""""${name.value}.$key"="$value""""
+              s""""$key"="$value""""
           }
 
       Cmd("LABEL", labelArguments.mkString(" "))
