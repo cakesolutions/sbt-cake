@@ -1,0 +1,80 @@
+$ exec echo "TEST: work without a git project repository"
+$ exec echo "- expect release to fail"
+
+> show version
+
+-> createRelease
+
+$ exec echo "TEST: work with a clean (untagged) git project repository"
+$ exec echo "- expect snapshot release to succeed"
+
+$ exec git init
+# The following is needed for CI environments
+$ exec git config user.email "jenkins@cakesolutions.net"
+$ exec git config user.name "Jenkins"
+$ exec git add .
+$ exec git commit -m "First commit"
+
+> reload
+> show version
+
+> createRelease
+-$ exists target/release
+$ exists target/snapshot
+$ delete target/snapshot
+
+$ exec echo "TEST: work with a dirty (untagged) git project repository"
+$ exec echo "- expect release to fail"
+
+$ exec touch dummy-change1.txt
+
+> reload
+> show version
+
+-> createRelease
+
+$ exec echo "TEST: work with a clean (wrongly tagged) git project repository"
+$ exec echo "- expect snapshot release to succeed"
+
+$ exec git add .
+$ exec git commit -m "Second commit"
+$ exec git tag -a wrong -m "wrong"
+
+> reload
+> show version
+
+> createRelease
+-$ exists target/release
+$ exists target/snapshot
+$ delete target/snapshot
+
+$ exec echo "TEST: work with a clean (version tagged) git project repository"
+$ exec echo "- expect release to succeed"
+
+$ exec touch dummy-change2.txt
+$ exec git add .
+$ exec git commit -m "Third commit"
+
+> tagBranch 42
+> reload
+> show version
+
+> createRelease
+$ exists target/release
+$ delete target/release
+-$ exists target/snapshot
+
+$ exec echo "TEST: work with a modified (version tagged) git project repository"
+$ exec echo "- expect snapshot release to succeed"
+
+$ exec touch dummy-change3.txt
+$ exec git add .
+$ exec git commit -m "Fourth commit"
+
+> reload
+> show version
+
+> createRelease
+-$ exists target/release
+$ exists target/snapshot
+$ delete target/snapshot

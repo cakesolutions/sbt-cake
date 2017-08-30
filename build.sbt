@@ -47,9 +47,6 @@ headerMappings :=
 ivyLoggingLevel := UpdateLogging.Quiet
 scalacOptions in Compile ++= Seq("-feature", "-deprecation")
 
-// TODO: CO-13: clean up this dependency maintenance nightmare
-
-addSbtPlugin(SbtDependencies.dynver)
 addSbtPlugin(SbtDependencies.buildInfo)
 addSbtPlugin(SbtDependencies.pgp)
 addSbtPlugin(SbtDependencies.digest)

@@ -21,7 +21,6 @@ ivyLoggingLevel := UpdateLogging.Quiet
 scalacOptions in Compile ++= Seq("-feature", "-deprecation")
 
 addSbtPlugin(header)
-addSbtPlugin(dynver)
 
 // To enable Sonatype publishing of this project's code
 addSbtPlugin(pgp)

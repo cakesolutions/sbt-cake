@@ -16,10 +16,10 @@ import sbt.Keys._
   * Solution Limited artifacts).
   */
 object CakePublishMavenPlugin extends AutoPlugin {
-  import sbtdynver.DynVerPlugin.{autoImport => DynVer}
+  import CakeDynVerPlugin.{autoImport => DynVer}
 
   /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
-  override def requires: Plugins = sbtdynver.DynVerPlugin
+  override def requires: Plugins = CakeDynVerPlugin
 
   /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
   override def trigger: PluginTrigger = noTrigger
@@ -33,24 +33,6 @@ object CakePublishMavenPlugin extends AutoPlugin {
 
   // Derived from https://github.com/scalacenter/sbt-release-early
   private val stableDef = new sbt.TaskSequential {}
-
-  /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
-  override val buildSettings: Seq[Setting[_]] =
-    inThisBuild(
-      List(
-        version :=
-          DynVer.dynverGitDescribeOutput.value.mkVersion(
-            versionFmt,
-            fallbackVersion(DynVer.dynverCurrentDate.value)
-          ),
-        DynVer.dynver := {
-          val now = new java.util.Date
-          sbtdynver.DynVer
-            .getGitDescribeOutput(now)
-            .mkVersion(versionFmt, fallbackVersion(now))
-        }
-      )
-    )
 
   /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
   override val projectSettings: Seq[Setting[_]] = Seq(
@@ -74,21 +56,6 @@ object CakePublishMavenPlugin extends AutoPlugin {
       Keys.publish
     )
   )
-
-  // Git repository versioning
-  private def versionFmt(out: sbtdynver.GitDescribeOutput): String =
-    (out.ref.value.startsWith("v"), out.commitSuffix.distance) match {
-      case (true, 0) =>
-        out.ref.dropV.value
-      case (true, _) =>
-        s"${out.ref.dropV.value}-${out.commitSuffix.sha}-SNAPSHOT"
-      case (false, _) =>
-        s"0.0.0-${out.ref.value}-SNAPSHOT"
-    }
-
-  // Non-git repository fallback versioning
-  private def fallbackVersion(date: java.util.Date): String =
-    s"0.0.0-${sbtdynver.DynVer.timestamp(date)}-SNAPSHOT"
 
   private object Defaults {
 
@@ -223,7 +190,7 @@ object CakePublishMavenPlugin extends AutoPlugin {
   * enabled on a project.
   */
 object CakePublishMavenPluginKeys {
-  import sbtdynver.DynVerPlugin.{autoImport => DynVer}
+  import CakeDynVerPlugin.{autoImport => DynVer}
 
   /**
     * Setting that returns true precisely when the current (dynamic) version is
@@ -234,7 +201,7 @@ object CakePublishMavenPluginKeys {
   val isDynVerSnapshot: Def.Initialize[Boolean] = Def.setting {
     val defaultValue = Keys.isSnapshot.value
     val isStable = DynVer.dynverGitDescribeOutput.value.map { info =>
-      info.ref.value.startsWith("v") &&
+      info.ref.value.startsWith(DynVer.dynVerPattern.value.tagPrefix) &&
       (info.commitSuffix.distance <= 0 || info.commitSuffix.sha.isEmpty)
     }
     val isNewSnapshot = isStable.map(stable => !stable || defaultValue)

@@ -194,6 +194,39 @@ The following configuration settings can be modified in projects that enable thi
 The expected suite of SBT Native Packager Docker tasks are enabled (e.g. `docker:stage`, `docker:publishLocal` and
 `docker:publish`).
 
+## `CakeDynVerPlugin`: Dynamic Versioning Plugin
+
+Plugin requirements: `JvmPlugin`
+
+This plugin is auto-loaded if all requirements are loaded.
+
+Enabling this plugin in a project allows for dynamic versioning to be flexibly altered. Its implementation is based on
+the SBT DynVerPlugin, however this implementation allows version tags to have a definable prefix.
+
+For most projects, customisation of the version tags should be a case of modifying the `mkVersion` setting. For more
+involved versioning strategies (e.g. with project specific tag prefixes), then it may be necessary to also modify the
+`dynVerPattern` setting. An example of how this may be done may be found in the `sbt-cake/custom-publish-maven` SBT
+scripted plugin tests.
+
+### Plugin Configuration
+
+The following settings keys are the main way in which the plugin is configured:
+* `dynVerPattern`: data for configuring git tag version prefixing
+* `mkVersion`: maps a `Option[GitDescribeOutput]` value to a version string
+
+The following settings keys are intended for application reading:
+* `dynver`: the dynamic versioning string
+* `dynverGitDescribeOutput`: parsed form of the git describe output
+* `dynverCurrentDate`: current UTC date for use in versioning
+
+The following settings keys should not be generally altered and exist mainly for internal plugin usage:
+* `dynVerPlugin`: holds the dynamic versioning plugin code configured with tag prefixing data
+
+### SBT Tasks
+
+* `dynverCheckVersion`: checks if the `dynver` and `version` values matches or not
+* `dynverAssertVersion`: asserts that `dynver` and `version` values matches.
+
 ## `CakeJavaAppPlugin`: Java Application Server Packaging
 
 Plugin requirements: `JavaServerAppPackaging`

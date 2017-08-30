@@ -22,10 +22,10 @@ import scoverage.ScoverageKeys._
   * - registering our repositories.
   */
 object CakeBuildPlugin extends AutoPlugin {
-  import sbtdynver.DynVerPlugin.{autoImport => DynVer}
+  import CakeDynVerPlugin.{autoImport => DynVer}
 
   /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
-  override def requires: Plugins = sbtdynver.DynVerPlugin
+  override def requires: Plugins = CakeDynVerPlugin
 
   /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
   override def trigger: PluginTrigger = allRequirements
