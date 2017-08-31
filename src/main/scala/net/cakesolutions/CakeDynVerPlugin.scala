@@ -192,9 +192,9 @@ class DynVerPluginData(dynVerPatternImpl: DynVerPattern) {
   private val Distance: Regex = """\+([0-9]+)""".r
   private val Sha: Regex = """([0-9a-f]{8})""".r
   private val CommitSuffix: Regex = s"""($Distance-$Sha)""".r
-  private val FromTag: Regex = s"""^$Tag$CommitSuffix?(\\+dirty)?$$""".r
-  private val FromSha: Regex = s"""^$Sha(\\+dirty)?$$""".r
-  private val FromHead: Regex = s"""^HEAD(\\+dirty)$$""".r
+  private val FromTag: Regex = s"""^$Tag$CommitSuffix?(-dirty)?$$""".r
+  private val FromSha: Regex = s"""^$Sha(-dirty)?$$""".r
+  private val FromHead: Regex = s"""^HEAD(-dirty)$$""".r
 
   private def gitDescribeSnapshot(_y: GitDescribeOutput): Boolean =
     _y.dirtySuffix.value.nonEmpty ||
