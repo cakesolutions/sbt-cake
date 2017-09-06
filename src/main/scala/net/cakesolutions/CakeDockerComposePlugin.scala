@@ -92,7 +92,7 @@ object CakeDockerComposePlugin extends AutoPlugin {
         Seq("docker-compose") ++
           projectName ++
           projectOverrides ++
-          Seq("down", "--rmi", "all", "--volumes") ++
+          Seq("down") ++
           dockerComposeDownExtras.value
       ).!
     if (result != 0) {
@@ -111,7 +111,13 @@ object CakeDockerComposePlugin extends AutoPlugin {
     dockerComposeUpLaunchStyle := "-d",
     dockerComposeUpExtras := Seq("--remove-orphans"),
     dockerComposeDown := dockerComposeDownTask.value,
-    dockerComposeDownExtras := Seq("--remove-orphans"),
+    dockerComposeDownExtras := {
+      if (sys.env.get("CI").isDefined) {
+        Seq("--rmi", "all", "--volumes")
+      } else {
+        Seq("--volumes")
+      }
+    },
     externalBuildTools ++=
       Seq(
         (

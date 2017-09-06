@@ -41,7 +41,9 @@ object CakeDynVerPlugin extends AutoPlugin {
     val dynverGitDescribeOutput: SettingKey[Option[GitDescribeOutput]] =
       settingKey[Option[GitDescribeOutput]]("The output from git describe")
     val mkVersion: SettingKey[Option[GitDescribeOutput] => String] =
-      settingKey[Option[GitDescribeOutput] => String]("???")
+      settingKey[Option[GitDescribeOutput] => String](
+        "Setting defining how to map git describe output to a version string"
+      )
     val dynverCheckVersion: TaskKey[Boolean] =
       taskKey[Boolean]("Checks if version and dynver match")
     val dynverAssertVersion: TaskKey[Unit] =
