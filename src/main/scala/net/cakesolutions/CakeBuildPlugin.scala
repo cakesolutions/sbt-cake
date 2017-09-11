@@ -13,7 +13,6 @@ import sbt.IO._
 import sbt.Keys._
 
 import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport._
-import scoverage.ScoverageKeys._
 import wartremover._
 
 /**
@@ -86,11 +85,7 @@ object CakeBuildPlugin extends AutoPlugin {
       scalaOrganization.value % "scala-library" % scalaVersion.value,
       scalaOrganization.value % "scala-reflect" % scalaVersion.value,
       scalaOrganization.value % "scalap" % scalaVersion.value
-    ),
-    coverageMinimum := 80,
-    coverageFailOnMinimum := true,
-    coverageExcludedFiles := ".*/target/.*",
-    coverageExcludedPackages := "controllers.javascript*;controllers.ref*;router*"
+    )
   ) ++ inConfig(Test)(sensibleTestSettings) ++ inConfig(Compile)(
       sensibleCrossPath
     )

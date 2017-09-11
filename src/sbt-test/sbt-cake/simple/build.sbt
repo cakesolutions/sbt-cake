@@ -15,7 +15,6 @@ val performance = project
   .enableFunctionalTests
   .enablePlugins(DockerPlugin, AshScriptPlugin)
   .settings(
-    libraryDependencies ++= deps.Gatling,
     dockerHealthEndpoint in IntegrationTest := "wibble",
     dockerHealthEndpoint in FunctionalTest := "wobble"
   )
