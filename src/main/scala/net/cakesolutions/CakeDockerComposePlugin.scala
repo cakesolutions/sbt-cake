@@ -68,7 +68,9 @@ object CakeDockerComposePlugin extends AutoPlugin {
           projectName ++
           projectOverrides ++
           Seq("up", dockerComposeUpLaunchStyle.value) ++
-          dockerComposeUpExtras.value
+          dockerComposeUpExtras.value,
+        file("."),
+        dockerComposeEnvVars.value.toSeq: _*
       ).!
     if (result != 0) {
       throw new IllegalStateException(
@@ -93,7 +95,9 @@ object CakeDockerComposePlugin extends AutoPlugin {
           projectName ++
           projectOverrides ++
           Seq("down") ++
-          dockerComposeDownExtras.value
+          dockerComposeDownExtras.value,
+        file("."),
+        dockerComposeEnvVars.value.toSeq: _*
       ).!
     if (result != 0) {
       throw new IllegalStateException(
@@ -105,6 +109,7 @@ object CakeDockerComposePlugin extends AutoPlugin {
   /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
   override val projectSettings: Seq[Setting[_]] = Seq(
     dockerComposeFiles := Seq(file("docker/docker-compose.yml")),
+    dockerComposeEnvVars := Map(),
     dockerComposeImageTask := (publishLocal in Docker).value,
     dockerComposeConfigCheck := dockerComposeConfigCheckTask.value,
     dockerComposeUp := dockerComposeUpTask.value,
@@ -146,6 +151,15 @@ object CakeDockerComposePluginKeys {
   val dockerComposeFiles: SettingKey[Seq[File]] =
     settingKey[Seq[File]](
       "docker-compose YAML files to use in dockerComposeUp"
+    )
+
+  /**
+    * Setting key defining the environment variables to be set by SBT when
+    * launching the docker-compose project.
+    */
+  val dockerComposeEnvVars: SettingKey[Map[String, String]] =
+    settingKey[Map[String, String]](
+      "docker-compose build environment variables"
     )
 
   /**

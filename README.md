@@ -155,6 +155,9 @@ environment variable `DOCKER_COMPOSE_PROJECT_NAME` allows the default Docker Com
 The following configuration settings can be modified in projects that enable this plugin:
 * `dockerComposeFile` (`docker/<project module>.yml` by default) - defines the YAML file to be used by Docker Compose
   commands
+* `dockerComposeEnvVars` (empty by default) - allows environment variables to be added to the docker-compose process
+  environment. This allows Docker image versions and service ports to be defined using data present in the SBT build
+  environment.
 * `dockerComposeUpLaunchStyle` (`-d` by default) - defines the style for the Docker Compose `up` command (can be used to
   specify `--abort-on-container-exit` or `--exit-code-from SERVICE`)
 * `dockerComposeUpExtras` (`Seq("--remove-orphans")` by default) - defines extra command line arguments that will be
