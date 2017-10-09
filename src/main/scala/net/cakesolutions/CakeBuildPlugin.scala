@@ -104,19 +104,17 @@ object CakeBuildKeys {
 
   import com.typesafe.sbt.SbtNativePackager._
   import CakeDockerComposePlugin._
-  import CakeDockerHealthPlugin._
   import CakeDockerComposePluginKeys._
-  import CakeDockerHealthPluginKeys._
 
   implicit class IntegrationTestOps(p: Project) {
     def enableIntegrationTests: Project = p
       .configs(IntegrationTest)
-      .enablePlugins(CakeDockerComposePlugin, CakeDockerHealthPlugin)
+      .enablePlugins(CakeDockerComposePlugin)
       .settings(
         inConfig(IntegrationTest)(
           Defaults.testSettings ++ sensibleTestSettings ++ scalafmtSettings ++ dockerComposeSettings ++ Seq(
             wartremoverWarnings in compile := (wartremoverWarnings in (Test, compile)).value,
-            dockerHealth := dockerHealthTask.value
+            dockerReady := dockerReadyTask.value
           )
         )
       )
@@ -125,12 +123,12 @@ object CakeBuildKeys {
   implicit class FunctionalTestOps(p: Project) {
     def enableFunctionalTests: Project =
       p.configs(FunctionalTest)
-        .enablePlugins(CakeDockerComposePlugin, CakeDockerHealthPlugin)
+        .enablePlugins(CakeDockerComposePlugin)
         .settings(
           inConfig(FunctionalTest)(
             Defaults.testSettings ++ sensibleTestSettings ++ scalafmtSettings ++ dockerComposeSettings ++ Seq(
               wartremoverWarnings in compile := (wartremoverWarnings in (Test, compile)).value,
-              dockerHealth := dockerHealthTask.value,
+              dockerReady := dockerReadyTask.value,
               dockerComposeImageTask := (publishLocal in Docker).value
             )
           )

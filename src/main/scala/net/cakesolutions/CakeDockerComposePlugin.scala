@@ -15,13 +15,13 @@ object CakeDockerComposePlugin extends AutoPlugin {
   val autoImport = CakeDockerComposePluginKeys
   import autoImport._
 
+  def projectName = sys.env
+    .get("DOCKER_COMPOSE_PROJECT_NAME")
+    .fold("")(name => s"-p $name")
+
   val dockerComposeUpTask: Def.Initialize[Task[Unit]] = Def.task {
     val _ = dockerComposeImageTask.value
     val input = dockerComposeFile.value.getCanonicalPath
-    val projectName =
-      sys.env
-        .get("DOCKER_COMPOSE_PROJECT_NAME")
-        .fold("")(name => s"-p $name")
     val res = s"docker-compose $projectName -f $input up -d".!
     if (res != 0)
       throw new IllegalStateException(
@@ -31,10 +31,6 @@ object CakeDockerComposePlugin extends AutoPlugin {
 
   val dockerComposeDownTask: Def.Initialize[Task[Unit]] = Def.task {
     val input = dockerComposeFile.value.getCanonicalPath
-    val projectName =
-      sys.env
-        .get("DOCKER_COMPOSE_PROJECT_NAME")
-        .fold("")(name => s"-p $name")
     val res = s"docker-compose $projectName -f $input down".!
     if (res != 0)
       throw new IllegalStateException(s"docker-compose down returned $res")
@@ -58,6 +54,16 @@ object CakeDockerComposePlugin extends AutoPlugin {
       if (res != 0)
         throw new IllegalStateException(s"docker rmi -f $id returned $res")
     }
+  }
+
+  val dockerReadyTask: Def.Initialize[Task[Unit]] = Def.task {
+    val input = dockerComposeFile.value.getCanonicalPath
+    val id = s"docker-compose $projectName -f $input ps -q ready".!!.split("\\n").head
+    val res = s"docker wait $id".!
+    if (res != 0)
+      throw new IllegalStateException(
+        s"docker wait returned $res"
+      )
   }
 
   override val projectSettings = Seq(
@@ -93,4 +99,5 @@ object CakeDockerComposePluginKeys {
     taskKey[Unit](
       "Runs `docker rmi -f <ids>` for the images associated to the scope"
     )
+  val dockerReady = taskKey[Unit]("Waits on a 'ready' container to exit")
 }
