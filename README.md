@@ -269,6 +269,83 @@ Configuration of this plugin should be avoided in local project SBT build files.
 
 No special tasks are enabled for this plugin.
 
+## `CakeDockerVersionPlugin`: Docker and Docker Compose Version Checking
+
+Plugin requirements: `CakeDockerComposePlugin`
+
+Enabling this plugin in a project provides setting minimum required `docker` and `docker-compose` versions and checking
+capability of either minimum versions are installed in the running environment or not.
+
+### Plugin Configuration
+
+The following configuration settings can be modified in projects that enable this plugin:
+* `minimumDockerVersion` (`(1, 13)` by default) - minimum docker version is `1.13`.
+* `minimumDockerComposeVersion` (`(1, 10)` by default) - minimum docker-compose version is `1.10`.
+
+### SBT Tasks
+
+The following SBT tasks are enabled:
+* `checkDockerVersion` - checks if docker version of machine is above the `minimumDockerVersion`.
+* `checkDockerComposeVersion` - checks if docker-compose version of machine is above the `minimumDockerComposeVersion`. 
+
+
+## `CakeDockerHealthPlugin`: Health Checking of Containers in Docker Compose Scope
+
+Plugin requirements: `CakeDockerComposePlugin`
+
+Enabling this plugin in a project provides dumping the logs and health checking of the containers 
+defined in the `dockerComposeFile` file in the `CakeDockerComposePlugin`. 
+
+### Plugin Configuration
+
+There is no special configuration provided by this plugin.
+
+### SBT Tasks
+
+SBT tasks of that plugin requires a running docker-compose stack.
+The following SBT tasks are enabled:
+* `dumpContainersLogs` - dumping logs of each container in the docker-compose scope.
+* `checkContainersHealth` - checking the health status of each container in the docker-compose scope.
+ All containers who have a health check definition should be healthy. 
+ If a container does not have a health check instruction, it will be ignored.
+ You can check that [post](https://blog.couchbase.com/docker-health-check-keeping-containers-healthy/) for details of docker health check feature.
+
+## `CakeTestRunnerPlugin`: Integration and Performance Test Lifecycle within Docker Stack
+
+Plugin requirements: `CakeDockerComposePlugin`
+
+Enabling this plugin in a project provides the functionality of running integration and performance tests
+within automatically managed docker fleet (stack). This plugin provides resource cleaning in case of failure or success
+of the tests. The lifecycle is consisting of following steps:
+
+* docker and docker-compose version checks
+* docker-compose up
+* health check of containers in docker-compose scope
+* running tests
+* dumping logs of containers
+* docker-compose down
+* docker remove containers in docker-compose scope
+
+
+Integration tests depend on unit tests.
+Performance tests depend on integration tests and using GatlingPlugin and its GatlingIt (integration) tests settings.
+GatlingIt looks for performance tests under `it` directory.
+
+### Plugin Configuration
+
+In order to wait enough for containers to reach to the healthy status,
+the following configuration settings can be modified in projects that enable this plugin:
+
+* `healthCheckRetryCount` (5 by default) - defines how much times plugin needs in total to retry 
+all containers reach to the healthy status
+* `healthCheckIntervalInSeconds` (5 seconds by default) - defines the rechecking interval for containers' health again. 
+
+### SBT Tasks
+
+The following SBT tasks are enabled:
+* `integrationTests` - runs integration tests within all docker operations and steps
+* `performanceTests` - runs performance tests within all docker operations and steps 
+
 ## `CakePublishMavenPlugin`: Artifact Publishing
 
 Plugin requirements: `DynVerPlugin`

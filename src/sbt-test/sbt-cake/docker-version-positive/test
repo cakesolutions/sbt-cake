@@ -1,0 +1,5 @@
+$ exec echo "TEST: check docker and docker-compose versions"
+$ exec echo "- expect test to pass with built-in minimum versions"
+> checkExternalBuildTools
+> checkDockerVersion
+> checkDockerComposeVersion

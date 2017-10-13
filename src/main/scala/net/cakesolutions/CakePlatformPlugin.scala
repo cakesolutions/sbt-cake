@@ -5,10 +5,11 @@
 // License: http://www.apache.org/licenses/LICENSE-2.0
 package net.cakesolutions
 
-import CakePlatformDependencies._
 import sbt._
 import sbt.Keys._
 import wartremover._
+
+import net.cakesolutions.CakePlatformDependencies._
 
 // scalastyle:off magic.number
 

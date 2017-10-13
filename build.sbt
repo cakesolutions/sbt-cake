@@ -56,6 +56,9 @@ addSbtPlugin(SbtDependencies.packager)
 addSbtPlugin(SbtDependencies.Coursier.sbt)
 addSbtPlugin(SbtDependencies.scoverage)
 addSbtPlugin(SbtDependencies.wartRemover)
+
+addSbtPlugin(SbtDependencies.gatling)
+
 // The following plugin is otherwise known as neo-sbt-scalafmt
 // - see: https://github.com/lucidsoftware/neo-sbt-scalafmt
 addSbtPlugin(SbtDependencies.scalafmt)
@@ -107,19 +110,19 @@ pomExtra := {
   val repository = name.value
 
   <url>https://github.com/{user}/{repository}</url>
-  <scm>
-    <url>
-      https://github.com/{user}/{repository}
-    </url>
-    <connection>
-      https://github.com/{user}/{repository}
-    </connection>
-  </scm>
-  <developers>
-    <developer>
-      <id>{user}</id>
-    </developer>
-  </developers>
+    <scm>
+      <url>
+        https://github.com/{user}/{repository}
+      </url>
+      <connection>
+        https://github.com/{user}/{repository}
+      </connection>
+    </scm>
+    <developers>
+      <developer>
+        <id>{user}</id>
+      </developer>
+    </developers>
 }
 
 scriptedSettings

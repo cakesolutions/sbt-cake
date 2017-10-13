@@ -67,13 +67,7 @@ object CakeBuildInfoPlugin extends AutoPlugin {
         "gitRepository" -> gitRepository
       )
     },
-    dockerInfo := {
-      externalBuildTools ++= Seq(
-        "docker --version" ->
-          "`docker` command should be installed and PATH accessible"
-      )
-      Map("buildDockerVersion" -> buildDockerVersion)
-    },
+    dockerInfo := Map("buildDockerVersion" -> buildDockerVersion),
     checkExternalBuildTools := {
       externalBuildTools.value.foreach {
         case (checkCmd, errorMsg) =>

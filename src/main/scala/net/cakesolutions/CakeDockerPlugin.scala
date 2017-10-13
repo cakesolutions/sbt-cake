@@ -55,6 +55,12 @@ object CakeDockerPlugin extends AutoPlugin {
 
       Cmd("LABEL", labelArguments.mkString(" "))
     },
+    CakeBuildInfoKeys.externalBuildTools ++= Seq(
+      (
+        "docker --version",
+        "`docker` command should be installed and PATH accessible"
+      )
+    ),
     dockerRemove := dockerRemoveTask.value
   )
 

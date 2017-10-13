@@ -1,0 +1,12 @@
+version: "2.1"
+
+services:
+  dockerhealth:
+    image: dockerhealth/dockerhealth
+    healthcheck:
+      test: ["CMD", "wget", "-qO", "-", "http://localhost:8080/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    ports:
+      - "8080:8080"

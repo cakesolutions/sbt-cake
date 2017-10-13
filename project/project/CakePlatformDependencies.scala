@@ -101,6 +101,7 @@ object CakePlatformDependencies {
     val buildInfo: ModuleID = "com.eed3si9n" % "sbt-buildinfo" % "0.7.0"
     val digest: ModuleID = "com.typesafe.sbt" % "sbt-digest" % "1.1.3"
     val dynver: ModuleID = "com.dwijnand" % "sbt-dynver" % "1.2.0"
+    val gatling: ModuleID = "io.gatling" % "gatling-sbt" % "2.2.1"
     val git: ModuleID = "com.typesafe.sbt" % "sbt-git" % "0.9.3"
     val gzip: ModuleID = "com.typesafe.sbt" % "sbt-gzip" % "1.0.2"
     val header: ModuleID = "de.heikoseeberger" % "sbt-header" % "2.0.0"

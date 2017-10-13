@@ -4,10 +4,10 @@
 package net.cakesolutions
 
 import com.typesafe.sbt.SbtNativePackager._
-import com.typesafe.sbt.packager.Keys._
-import net.cakesolutions.CakeBuildInfoKeys.externalBuildTools
 import sbt._
 import sbt.Keys._
+
+import net.cakesolutions.CakeBuildInfoKeys.externalBuildTools
 
 /**
   * Cake recommended tasks for configuring and using docker-compose within SBT
@@ -25,7 +25,7 @@ object CakeDockerComposePlugin extends AutoPlugin {
     * When this plugin is enabled, {{autoImport}} defines a wildcard import for
     * set, eval, and .sbt files.
     */
-  val autoImport = CakeDockerComposePluginKeys
+  val autoImport = CakeDockerComposeKeys
   import autoImport._
 
   private val dockerComposeConfigCheckTask: Def.Initialize[Task[Unit]] =
@@ -141,7 +141,7 @@ object CakeDockerComposePlugin extends AutoPlugin {
 /**
   * SBT docker-compose build settings and tasks
   */
-object CakeDockerComposePluginKeys {
+object CakeDockerComposeKeys {
 
   /**
     * Setting key defining the project files to be used by docker-compose

@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicLong
 import scala.util._
 
 import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport._
+import io.gatling.sbt.GatlingPlugin
 import sbt._
 import sbt.Keys._
 import scoverage.ScoverageKeys._
@@ -146,6 +147,19 @@ object CakeBuildKeys {
           inConfig(IntegrationTest)(
             Defaults.testSettings ++ sensibleTestSettings ++ scalafmtSettings
           )
+        )
+
+    /**
+      * Enable performance test on top of integration test settings
+      * and GatlingPlugin.
+      *
+      * @return Project with performance test settings and configuration applied
+      */
+    def enablePerformanceTests: Project =
+      p.enableIntegrationTests
+        .enablePlugins(GatlingPlugin)
+        .settings(
+          libraryDependencies ++= CakePlatformKeys.PlatformBundles.gatling
         )
   }
 

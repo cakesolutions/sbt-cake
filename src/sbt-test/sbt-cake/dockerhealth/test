@@ -1,0 +1,34 @@
+> checkExternalBuildTools
+> checkDockerComposeVersion
+
+# FIXME: checkContainersHealth returns true when there is no container, since, forall is returning true on empty collection.
+#$ exec echo "TEST: check docker health - no containers launched"
+#$ exec echo "- expect test to fail"
+#-> checkContainersHealth
+
+$ exec echo "TEST: check docker health - containers launched"
+> dockerComposeUp
+
+$ exec echo "immediate docker health check should fail"
+-> checkContainersHealth
+
+# FIXME: curl not working on docker container: curl: (52) Empty reply from server
+#$ exec curl -X PUT http://localhost:8080/health
+
+$ exec echo "sleep 10 sec for docker health"
+$ exec sleep 10
+
+$ exec echo "docker health check should pass now"
+> checkContainersHealth
+
+$ exec echo "TEST: check docker container logs may be dumped"
+$ exec echo "- expect test to pass"
+> dumpContainersLogs
+# FIXME: due to awslog usage, we cannot verify the following in jenkins?
+
+# FIXME: name is like docker_dockerhealth_1-8dbf6035ce5c4ee1d6876c2ad83d35dea8e1f3a259987ee823c0d3c56e3b15a6.log
+#$ exists target/docker/docker_dockerhealth_1.log
+
+> dockerComposeDown
+
+> dockerRemove
