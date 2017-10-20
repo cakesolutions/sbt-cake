@@ -114,7 +114,9 @@ object CakeTestRunnerPlugin extends AutoPlugin {
     def check(rc: Int): Boolean = {
       val healthy =
         checkHealth(CakeDockerComposeKeys.dockerComposeFiles.value)(
-          streams.value.log
+          streams.value.log,
+          CakeBuildInfoKeys.projectRoot.value,
+          dockerComposeEnvVars.value
         )
       if (!healthy && rc > 0) {
         Thread.sleep(healthCheckIntervalInSeconds.value.seconds.toMillis)

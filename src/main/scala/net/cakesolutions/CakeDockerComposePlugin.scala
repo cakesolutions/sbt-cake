@@ -7,7 +7,7 @@ import com.typesafe.sbt.SbtNativePackager._
 import sbt._
 import sbt.Keys._
 
-import net.cakesolutions.CakeBuildInfoKeys.externalBuildTools
+import net.cakesolutions.CakeBuildInfoKeys.{externalBuildTools, projectRoot}
 
 /**
   * Cake recommended tasks for configuring and using docker-compose within SBT
@@ -43,7 +43,9 @@ object CakeDockerComposePlugin extends AutoPlugin {
           Seq("docker-compose") ++
             projectName ++
             projectOverrides ++
-            Seq("config", "-q")
+            Seq("config", "-q"),
+          projectRoot.value,
+          dockerComposeEnvVars.value.toSeq: _*
         ).!
       if (result != 0) {
         throw new IllegalStateException(
@@ -69,7 +71,7 @@ object CakeDockerComposePlugin extends AutoPlugin {
           projectOverrides ++
           Seq("up", dockerComposeUpLaunchStyle.value) ++
           dockerComposeUpExtras.value,
-        file("."),
+        projectRoot.value,
         dockerComposeEnvVars.value.toSeq: _*
       ).!
     if (result != 0) {
@@ -96,7 +98,7 @@ object CakeDockerComposePlugin extends AutoPlugin {
           projectOverrides ++
           Seq("down") ++
           dockerComposeDownExtras.value,
-        file("."),
+        projectRoot.value,
         dockerComposeEnvVars.value.toSeq: _*
       ).!
     if (result != 0) {

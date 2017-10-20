@@ -3,8 +3,7 @@
 
 import java.net.URL
 
-import net.cakesolutions.CakePlatformDependencies
-import net.cakesolutions.CakePlatformKeys._
+import net.cakesolutions.CakePlatformDependencies._
 import net.cakesolutions.CakePublishMavenPluginKeys._
 import net.cakesolutions.ReleaseNotesPluginKeys._
 
@@ -22,10 +21,15 @@ issueManagementUrl := Some(new URL("http://localhost:8080"))
 
 issueManagementProject := Some("SBTTesting")
 
-// TODO: CO-13: clean up this dependency maintenance nightmare
-libraryDependencies ++=
-  PlatformBundles.akkaHttp :+
-    (CakePlatformDependencies.Akka.Http.sprayJson)
+libraryDependencies ++= Seq(
+  Akka.Http.base,
+  Akka.Http.core,
+  Akka.Http.sprayJson,
+  Akka.Http.testkit % Test,
+  Jackson.databind,
+  Jackson.scala,
+  swagger
+)
 
 mainClass in Compile := Some("MockIssueManagementServer")
 

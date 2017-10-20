@@ -6,6 +6,7 @@ package net.cakesolutions
 import sbt._
 import sbt.Keys._
 
+import net.cakesolutions.CakeDockerComposeKeys._
 import net.cakesolutions.CakeDockerVersionKeys.{minimumDockerComposeVersion, minimumDockerVersion}
 import net.cakesolutions.internal.Version
 
@@ -43,13 +44,19 @@ object CakeDockerHealthPlugin extends AutoPlugin {
     minimumDockerComposeVersion :=
       Version.selectLatest(minimumDockerComposeVersion.value, (1, 10)),
     dumpContainersLogs := dumpLogs(
-      CakeDockerComposeKeys.dockerComposeFiles.value,
+      dockerComposeFiles.value,
       file("target")
-    )(streams.value.log),
+    )(
+      streams.value.log,
+      CakeBuildInfoKeys.projectRoot.value,
+      dockerComposeEnvVars.value
+    ),
     checkContainersHealth := {
       require(
-        checkHealth(CakeDockerComposeKeys.dockerComposeFiles.value)(
-          streams.value.log
+        checkHealth(dockerComposeFiles.value)(
+          streams.value.log,
+          CakeBuildInfoKeys.projectRoot.value,
+          dockerComposeEnvVars.value
         ),
         "All containers should be healthy"
       )

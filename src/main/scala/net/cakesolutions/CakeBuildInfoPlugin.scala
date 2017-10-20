@@ -75,7 +75,26 @@ object CakeBuildInfoPlugin extends AutoPlugin {
       }
     },
     packageOptions in (Compile, packageBin) +=
-      Package.ManifestAttributes(generalInfo.value.toSeq: _*)
+      Package.ManifestAttributes(generalInfo.value.toSeq: _*),
+    projectRoot := {
+      Try {
+        "git rev-parse HEAD --show-toplevel".!!.split("\n").toSeq match {
+          case Seq(_, topLevel) =>
+            file(topLevel)
+          case _ =>
+            sLog.value.warn(
+              "Unexpected git rev-parse output: " +
+                "defaulting to '.' for projectRoot"
+            )
+            file(".")
+        }
+      }.getOrElse {
+        sLog.value.warn(
+          "Not a git repository: defaulting to '.' for projectRoot"
+        )
+        file(".")
+      }
+    }
   )
 
   private def buildDatetime =
@@ -102,6 +121,12 @@ object CakeBuildInfoPlugin extends AutoPlugin {
   * Build keys that will be auto-imported when this plugin is enabled.
   */
 object CakeBuildInfoKeys {
+
+  /**
+    * Setting holding the root directory for this project's repository
+    */
+  val projectRoot: SettingKey[File] =
+    settingKey[File]("Root directory for the project repository")
 
   /**
     * Map holding generic set of labelled values. These are use to label jar

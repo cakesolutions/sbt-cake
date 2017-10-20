@@ -20,9 +20,17 @@ private[cakesolutions] object CakeDockerUtils {
     *
     * @param ymlFiles docker-compose files which defines scope
     * @param log sbt logger
+    * @param projectRoot projectRoot settings key value
+    * @param dockerComposeEnvVars dockerComposeEnvVars settings key value
     * @return either all containers are healthy or not
     */
-  def checkHealth(ymlFiles: Seq[File])(implicit log: Logger): Boolean = {
+  def checkHealth(
+    ymlFiles: Seq[File]
+  )(
+    implicit log: Logger,
+    projectRoot: File,
+    dockerComposeEnvVars: Map[String, String]
+  ): Boolean = {
     containerIds(ymlFiles).forall(isHealthy)
   }
 
@@ -67,9 +75,13 @@ private[cakesolutions] object CakeDockerUtils {
     * @param ymlFiles docker-compose files which defines scope
     * @param targetDir target directory for log files
     * @param log sbt logger
+    * @param projectRoot projectRoot settings key value
+    * @param dockerComposeEnvVars dockerComposeEnvVars settings key value
     */
   def dumpLogs(ymlFiles: Seq[File], targetDir: File)(
-    implicit log: Logger
+    implicit log: Logger,
+    projectRoot: File,
+    dockerComposeEnvVars: Map[String, String]
   ): Unit = {
     containerIds(ymlFiles).foreach { containerId =>
       val dockerTargetDir = file(targetDir.getAbsolutePath + "/docker")
@@ -112,7 +124,11 @@ private[cakesolutions] object CakeDockerUtils {
 
   private def containerIds(
     ymlFiles: Seq[File]
-  )(implicit log: Logger): Seq[String] = {
+  )(
+    implicit log: Logger,
+    projectRoot: File,
+    dockerComposeEnvVars: Map[String, String]
+  ): Seq[String] = {
 
     val projectOverrides =
       ymlFiles.flatMap(yaml => Seq("-f", yaml.getCanonicalPath))
@@ -123,10 +139,14 @@ private[cakesolutions] object CakeDockerUtils {
         .fold(Seq.empty[String])(name => Seq("-p", name))
 
     val listContainers =
-      Seq("docker-compose") ++
-        projectName ++
-        projectOverrides ++
-        Seq("ps", "-q")
+      Process(
+        Seq("docker-compose") ++
+          projectName ++
+          projectOverrides ++
+          Seq("ps", "-q"),
+        projectRoot,
+        dockerComposeEnvVars.toSeq: _*
+      )
 
     Try(listContainers.!!.trim.split("\\s").toSeq) match {
       case Failure(exn) =>

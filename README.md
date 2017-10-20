@@ -252,23 +252,6 @@ The following configuration settings can be modified in projects that enable thi
 The expected suite of SBT Native Packager Java application tasks are enabled (e.g. `stage`, `universal:packageBin`,
 `debian:packageBin` and `docker:publishLocal`).
 
-## `CakePlatformPlugin`: Core Platform Library Dependencies
-
-Plugin requirements: `CakeStandardsPlugin`, `CakeBuildPlugin` and `DynVerPlugin`
-
-This plugin needs to be explicitly enabled in order to be loaded.
-
-Enabling this plugin in a project provides access to a standard set of core library dependency keys. All projects should
-enable this plugin (either directly or indirectly).
-
-### Plugin Configuration
-
-Configuration of this plugin should be avoided in local project SBT build files.
-
-### SBT Tasks
-
-No special tasks are enabled for this plugin.
-
 ## `CakeDockerVersionPlugin`: Docker and Docker Compose Version Checking
 
 Plugin requirements: `CakeDockerComposePlugin`

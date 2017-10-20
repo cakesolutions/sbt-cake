@@ -1,7 +1,7 @@
 // Copyright: 2017 https://github.com/cakesolutions/sbt-cake/graphs
 // License: http://www.apache.org/licenses/LICENSE-2.0
 
-import net.cakesolutions.CakePlatformDependencies
+import net.cakesolutions.CakePlatformDependencies.{Gatling => GatlingModule, _}
 import net.cakesolutions.CakeBuildInfoKeys._
 import net.cakesolutions.CakeTestRunnerKeys._
 
@@ -16,7 +16,6 @@ val testrunner = (project in file("."))
     AshScriptPlugin,
     CakeBuildPlugin,
     CakeDockerPlugin,
-    CakePlatformPlugin,
     CakeTestRunnerPlugin)
   .settings(
     dependencyOverrides ++= Set(
@@ -25,9 +24,19 @@ val testrunner = (project in file("."))
     )
   )
   .settings(
-    libraryDependencies ++=
-      PlatformBundles.akkaHttp :+
-        CakePlatformDependencies.Akka.Http.sprayJson
+    libraryDependencies ++= Seq(
+      Akka.Http.base,
+      Akka.Http.core,
+      Akka.Http.sprayJson,
+      Akka.Http.testkit % Test,
+      GatlingModule.app,
+      GatlingModule.highcharts,
+      GatlingModule.testkit,
+      GatlingModule.http,
+      Jackson.databind,
+      Jackson.scala,
+      swagger
+    )
   )
   .settings(
     mainClass in Compile := Some("MockServer")

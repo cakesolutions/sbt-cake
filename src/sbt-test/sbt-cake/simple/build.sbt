@@ -1,3 +1,5 @@
+import net.cakesolutions.CakePlatformDependencies
+
 name in ThisBuild := "simple"
 
 scalafmtOnCompile := true
@@ -12,4 +14,11 @@ val engine = project
 
 val performance = project.enableIntegrationTests
   .enablePlugins(DockerPlugin, AshScriptPlugin)
-  .settings(libraryDependencies ++= PlatformBundles.gatling)
+  .settings(
+    libraryDependencies ++= Seq(
+      CakePlatformDependencies.Gatling.app,
+      CakePlatformDependencies.Gatling.highcharts,
+      CakePlatformDependencies.Gatling.testkit,
+      CakePlatformDependencies.Gatling.http
+    )
+  )

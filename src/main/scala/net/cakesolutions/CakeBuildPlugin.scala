@@ -158,9 +158,6 @@ object CakeBuildKeys {
     def enablePerformanceTests: Project =
       p.enableIntegrationTests
         .enablePlugins(GatlingPlugin)
-        .settings(
-          libraryDependencies ++= CakePlatformKeys.PlatformBundles.gatling
-        )
   }
 
   /**
@@ -173,7 +170,8 @@ object CakeBuildKeys {
   def sensibleTestSettings: Seq[Def.Setting[_]] =
     sensibleCrossPath ++
       Seq(
-        parallelExecution := true,
+        parallelExecution in Test := true,
+        parallelExecution in IntegrationTest := false,
         javaOptions ~= (_.filterNot(
           _.startsWith("-Dlogback.configurationFile")
         )),
@@ -182,7 +180,8 @@ object CakeBuildKeys {
           val config = configuration.value
           s"-Dlogback.configurationFile=$baseDir/logback-$config.xml"
         },
-        testForkedParallel := true,
+        testForkedParallel in Test := true,
+        testForkedParallel in IntegrationTest := false,
         testGrouping := {
           val opts = ForkOptions(
             bootJars = Nil,
