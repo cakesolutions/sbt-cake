@@ -64,14 +64,12 @@ object CakePlatformPlugin extends AutoPlugin {
 
   override val buildSettings = Seq()
 
-  val ExclusionRule = SbtExclusionRule
-
   override val projectSettings = Seq(
-    dependencyOverrides ++= Set(
+    dependencyOverrides ++= Seq(
       "io.netty" % "netty" % "3.10.6.Final" // akka remoting only works on netty 3
     ),
     // trust me, you don't ever want to get your stdlib versions out of sync...
-    dependencyOverrides ++= Set(
+    dependencyOverrides ++= Seq(
       // user may have a different scala provider...
       scalaOrganization.value % "scala-compiler" % scalaVersion.value,
       scalaOrganization.value % "scala-library" % scalaVersion.value,
@@ -80,7 +78,7 @@ object CakePlatformPlugin extends AutoPlugin {
     ),
     // logging should be available everywhere (opt out if you really must...)
     libraryDependencies ++= deps.logback,
-    dependencyOverrides ++= deps.logback.toSet,
+    dependencyOverrides ++= deps.logback,
     libraryDependencies += "com.typesafe" % "config" % "1.3.1",
     libraryDependencies ++= deps.testing(Test),
     // the naughty list

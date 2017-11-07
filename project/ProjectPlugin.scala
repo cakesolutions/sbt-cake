@@ -228,7 +228,8 @@ object ProjectPluginKeys {
           Nil,
           log
         )
-        .foreach(sys.error)
+        .failed
+        .foreach(f => sys.error(f.getMessage))
 
       log.info(s"Summary is in $results")
     }

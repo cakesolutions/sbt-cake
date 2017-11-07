@@ -97,7 +97,9 @@ object NeoJmh extends AutoPlugin {
                generator),
           s.log
         )
-        .foreach(sys.error)
+        .failed
+        .foreach(f => sys.error(f.getMessage))
+
       ((sourceDir ** "*").filter(_.isFile) +++ (resourceDir ** "*").filter(
         _.isFile)).get.toSet
     }

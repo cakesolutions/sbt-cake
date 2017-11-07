@@ -1,6 +1,7 @@
 package net.cakesolutions
 
 import scala.util.Try
+import scala.sys.process._
 
 import sbt._
 import sbt.Keys._

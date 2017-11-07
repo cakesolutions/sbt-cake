@@ -74,7 +74,7 @@ object CakeBuildPlugin extends AutoPlugin {
     // prefer a per-application logback.xml in resources
     // javaOptions in Compile += s"-Dlogback.configurationFile=${(baseDirectory in ThisBuild).value}/logback-main.xml",
     javaOptions ++= JavaSpecificFlags ++ Seq("-Xss2m", "-Dfile.encoding=UTF8"),
-    dependencyOverrides ++= Set(
+    dependencyOverrides ++= Seq(
       // scala-lang is always used during transitive ivy resolution (and potentially thrown out...)
       "org.scala-lang" % "scala-compiler" % scalaVersion.value,
       "org.scala-lang" % "scala-library" % scalaVersion.value,

@@ -2,7 +2,7 @@
 import coursier.Keys._
 
 libraryDependencies += "org.slf4j" % "slf4j-nop" % "1.7.25"
-excludeDependencies += SbtExclusionRule("org.slf4j", "slf4j-simple")
+excludeDependencies += ExclusionRule("org.slf4j", "slf4j-simple")
 
 ivyLoggingLevel := UpdateLogging.Quiet
 scalacOptions in Compile ++= Seq("-feature", "-deprecation")
