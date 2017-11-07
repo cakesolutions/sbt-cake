@@ -1,0 +1,9 @@
+*.log
+target/
+.idea
+.DS_store
+version
+.sbtopts
+
+dist/
+.stack-work/
