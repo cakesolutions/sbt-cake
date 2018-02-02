@@ -7,11 +7,12 @@ import java.time.{Clock, ZonedDateTime}
 import java.time.format.DateTimeFormatter
 
 import scala.util.{Failure, Success, Try}
-
 import com.google.common.base.Charsets
 import com.google.common.io.BaseEncoding
 import sbt._
 import sbt.Keys._
+
+import scala.util.matching.Regex
 
 /**
   * Plugin for automatically generating release notes in issue management
@@ -42,6 +43,7 @@ object ReleaseNotesPlugin extends AutoPlugin {
   override val projectSettings: Seq[Setting[_]] = Seq(
     issueManagementUrl := None,
     issueManagementProject := None,
+    issuePattern := """(\w+-\d+)""".r,
     CakeBuildInfoKeys.externalBuildTools += (
       "curl --version",
       "`curl` command should be installed and PATH accessible"
@@ -122,10 +124,10 @@ object ReleaseNotesPlugin extends AutoPlugin {
                 s"Version tag of $currentTag does not match the current " +
                   s"version of $currentVersion"
               )
-              s"$lastTag...$currentTag"
+              s"v$lastTag...v$currentTag"
             case _: List[String] =>
               throw new AssertionError(
-                "Impossible scenarion: multiple version tags found " +
+                "Impossible scenario: multiple version tags found " +
                   "- unable to generate release version notes!"
               )
           }
@@ -137,8 +139,13 @@ object ReleaseNotesPlugin extends AutoPlugin {
             Try {
               issueListCommand.!!.split("\n").toList
                 .map(_.trim.replaceAll("\"", ""))
-                .filter(_.matches("^\\w+-\\d+:.*$"))
-                .map(_.split(":").head)
+                .flatMap(message =>
+                  issuePattern
+                    .value
+                    .findAllIn(message)
+                    .matchData
+                    .map(_.group(1))
+                )
             }
 
           assume(
@@ -362,6 +369,13 @@ object ReleaseNotesPluginKeys {
     settingKey(
       "Optional URL pointing to the issue management system (e.g. Jira) for " +
         "the publishing of release notes"
+    )
+
+
+  val issuePattern: SettingKey[Regex] =
+    settingKey(
+      "Regex pattern identifying issue numbers (e.g. in Jira: PRJ-123) " +
+        """defaults to "(\w+-\d+)""""
     )
 
   /**
