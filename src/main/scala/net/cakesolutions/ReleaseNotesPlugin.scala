@@ -11,8 +11,8 @@ import scala.util.matching.Regex
 
 import com.google.common.base.Charsets
 import com.google.common.io.BaseEncoding
-import sbt.Keys._
 import sbt._
+import sbt.Keys._
 
 /**
   * Plugin for automatically generating release notes in issue management
@@ -139,12 +139,12 @@ object ReleaseNotesPlugin extends AutoPlugin {
             Try {
               issueListCommand.!!.split("\n").toList
                 .map(_.trim.replaceAll("\"", ""))
-                .flatMap(message =>
-                  issuePattern
-                    .value
-                    .findAllIn(message)
-                    .matchData
-                    .map(_.group(1))
+                .flatMap(
+                  message =>
+                    issuePattern.value
+                      .findAllIn(message)
+                      .matchData
+                      .map(_.group(1))
                 )
             }
 
@@ -370,7 +370,6 @@ object ReleaseNotesPluginKeys {
       "Optional URL pointing to the issue management system (e.g. Jira) for " +
         "the publishing of release notes"
     )
-
 
   val issuePattern: SettingKey[Regex] =
     settingKey(
