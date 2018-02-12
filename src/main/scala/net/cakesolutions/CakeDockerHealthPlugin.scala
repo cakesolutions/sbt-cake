@@ -3,8 +3,8 @@
 
 package net.cakesolutions
 
-import sbt._
 import sbt.Keys._
+import sbt._
 
 import net.cakesolutions.CakeDockerComposeKeys._
 import net.cakesolutions.CakeDockerVersionKeys.{minimumDockerComposeVersion, minimumDockerVersion}

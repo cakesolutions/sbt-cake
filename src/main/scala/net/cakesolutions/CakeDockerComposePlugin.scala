@@ -4,8 +4,8 @@
 package net.cakesolutions
 
 import com.typesafe.sbt.SbtNativePackager._
-import sbt._
 import sbt.Keys._
+import sbt._
 
 import net.cakesolutions.CakeBuildInfoKeys.{externalBuildTools, projectRoot}
 

@@ -8,8 +8,8 @@ import java.time.format.DateTimeFormatter
 
 import scala.util._
 
-import sbt._
 import sbt.Keys._
+import sbt._
 import sbtbuildinfo.BuildInfoPlugin
 import sbtbuildinfo.BuildInfoPlugin.autoImport._
 

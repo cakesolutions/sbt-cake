@@ -18,8 +18,8 @@ class ValueDiscardSuccess extends FreeSpec with Matchers {
     val ignore: Unit = ValueDiscard[Future[Int]]{
       Future(42)
     }
-
-    assert(true)
+    // dummy check using `ignore` otherwise fails because of unused local variable
+    assert(ignore.isInstanceOf[Unit])
   }
 
   "Ensure multiple Scalatest matchers succeed" in {

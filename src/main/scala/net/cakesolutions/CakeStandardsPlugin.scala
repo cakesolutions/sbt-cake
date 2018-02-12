@@ -7,8 +7,8 @@ package net.cakesolutions
 
 import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin
 import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport._
-import sbt._
 import sbt.Keys._
+import sbt._
 import wartremover._
 
 // scalastyle:off magic.number
@@ -33,55 +33,106 @@ object CakeStandardsPlugin extends AutoPlugin {
   override val projectSettings: Seq[Setting[_]] =
     ScalafmtCorePlugin.projectSettings ++
       Seq(Compile, Test).flatMap(inConfig(_)(scalafmtSettings)) ++
+      wartRemoverSettings ++
+      customJavacOptions ++
       Seq(
-        scalacOptions ++=
-          Seq(
-            "-encoding",
-            "UTF-8",
-            "-feature",
-            "-deprecation",
-            "-unchecked",
-            "-language:postfixOps",
-            "-language:implicitConversions",
-            "-Xlint",
-            "-Yno-adapted-args",
-            "-Ywarn-dead-code",
-            "-Ywarn-value-discard",
-            "-Ywarn-numeric-widen",
-            "-Xfuture"
-          ) ++ {
-            CrossVersion.partialVersion(scalaVersion.value) match {
-              case Some((2, 12)) =>
-                Seq("-Ywarn-unused-import", "-Ypartial-unification")
-              case Some((2, 11)) =>
-                Seq(
-                  "-Yinline-warnings",
-                  "-Ywarn-unused-import",
-                  "-Ypartial-unification"
-                )
-              case Some((2, 10)) =>
-                Seq("-Yinline-warnings")
-              case _ =>
-                Nil
-            }
-          } ++
-            // fatal warnings can get in the way during the DEV cycle
-            sys.env
-              .get("CI")
-              .fold(Seq.empty[String])(_ => Seq("-Xfatal-warnings")),
-        javacOptions ++=
-          Seq(
-            "-Xlint:all",
-            "-Xlint:-options",
-            "-Xlint:-path",
-            "-Xlint:-processing"
-          ) ++
-            sys.env.get("CI").fold(Seq.empty[String])(_ => Seq("-Werror")),
-        // some of those flags are not supported in doc
-        javacOptions in doc ~= (_.filterNot(_.startsWith("-Xlint"))),
-        // http://www.wartremover.org
-        wartremoverExcluded in Compile ++= (managedSources in Compile).value,
-        wartremoverWarnings in (Compile, compile) :=
-          Warts.unsafe ++ Seq(Wart.FinalCaseClass, Wart.ExplicitImplicitTypes)
+        scalacOptions ++= commonScalacOptions ++ {
+          CrossVersion.partialVersion(scalaVersion.value) match {
+            case Some((2, 12)) =>
+              scalacOptionsFor212
+            case Some((2, 11)) =>
+              scalacOptionsFor211
+            case _ =>
+              Nil
+          }
+        } ++
+          // fatal warnings can get in the way during the DEV cycle
+          sys.env
+            .get("CI")
+            .fold(Seq.empty[String])(_ => Seq("-Xfatal-warnings"))
       )
+
+  private lazy val customJavacOptions = Seq(
+    javacOptions ++=
+      Seq(
+        "-Xlint:all",
+        "-Xlint:-options",
+        "-Xlint:-path",
+        "-Xlint:-processing"
+      ) ++
+        sys.env.get("CI").fold(Seq.empty[String])(_ => Seq("-Werror")),
+    // some of those flags are not supported in doc
+    javacOptions in doc ~= (_.filterNot(_.startsWith("-Xlint")))
+  )
+
+  private lazy val wartRemoverSettings = {
+    // http://www.wartremover.org
+    val warts = Warts.unsafe ++
+      Seq(Wart.FinalCaseClass, Wart.ExplicitImplicitTypes)
+    Seq(
+      wartremoverErrors in (Compile, compile) := warts,
+      wartremoverWarnings in (Test, compile) := warts,
+      wartremoverWarnings in (IntegrationTest, compile) := warts,
+      wartremoverExcluded in Compile ++= (managedSources in Compile).value
+    )
+  }
+
+  // See https://tpolecat.github.io/2017/04/25/scalac-flags.html
+  private lazy val scalacOptionsFor212 = Seq(
+    "-Xlint:constant",
+    "-Ywarn-extra-implicit",
+    "-Ywarn-unused:implicits",
+    "-Ywarn-unused:imports",
+    "-Ywarn-unused:locals",
+    "-Ywarn-unused:params",
+    "-Ywarn-unused:patvars",
+    "-Ywarn-unused:privates"
+  )
+
+  private lazy val scalacOptionsFor211 = Seq(
+    "-Yinline-warnings",
+    "-Ywarn-unused",
+    "-Ywarn-unused-import"
+  )
+
+  private lazy val commonScalacOptions = Seq(
+    "-deprecation",
+    "-encoding",
+    "utf-8",
+    "-explaintypes",
+    "-feature",
+    "-language:existentials",
+    "-language:experimental.macros",
+    "-language:higherKinds",
+    "-language:implicitConversions",
+    "-language:postfixOps",
+    "-unchecked",
+    "-Xcheckinit",
+    "-Xfuture",
+    "-Xlint:adapted-args",
+    "-Xlint:by-name-right-associative",
+    "-Xlint:delayedinit-select",
+    "-Xlint:doc-detached",
+    "-Xlint:inaccessible",
+    "-Xlint:infer-any",
+    "-Xlint:missing-interpolator",
+    "-Xlint:nullary-override",
+    "-Xlint:nullary-unit",
+    "-Xlint:option-implicit",
+    "-Xlint:package-object-classes",
+    "-Xlint:poly-implicit-overload",
+    "-Xlint:private-shadow",
+    "-Xlint:stars-align",
+    "-Xlint:type-parameter-shadow",
+    "-Xlint:unsound-match",
+    "-Yno-adapted-args",
+    "-Ypartial-unification",
+    "-Ywarn-dead-code",
+    "-Ywarn-inaccessible",
+    "-Ywarn-infer-any",
+    "-Ywarn-nullary-override",
+    "-Ywarn-nullary-unit",
+    "-Ywarn-numeric-widen",
+    "-Ywarn-value-discard"
+  )
 }

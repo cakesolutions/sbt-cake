@@ -12,6 +12,6 @@ class ValueDiscardFailure extends FreeSpec {
       Future(42)
     }
 
-    assert(true)
+    assert(ignore.isInstanceOf[Unit])
   }
 }

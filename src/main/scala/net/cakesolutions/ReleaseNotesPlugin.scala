@@ -10,8 +10,8 @@ import scala.util.{Failure, Success, Try}
 
 import com.google.common.base.Charsets
 import com.google.common.io.BaseEncoding
-import sbt._
 import sbt.Keys._
+import sbt._
 
 /**
   * Plugin for automatically generating release notes in issue management
@@ -52,6 +52,7 @@ object ReleaseNotesPlugin extends AutoPlugin {
   )
 
   private object Defaults {
+
     val checkReleaseNoteSettings: Def.Initialize[Task[Unit]] = Def.taskDyn {
       require(
         issueManagementUrl.value.nonEmpty,
