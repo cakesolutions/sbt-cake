@@ -52,6 +52,15 @@ object MockIssueManagementServer extends App {
           }
         }
       } ~
+      path("releases") {
+        post {
+          extractDataBytes { bytes =>
+            bytes
+              .runWith(FileIO.toPath(new File("post-release.json").toPath))
+            complete(OK)
+          }
+        }
+      } ~
       { ctx =>
         println(s"Rejected: ${ctx.request}")
         ctx.complete(Forbidden)

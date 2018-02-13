@@ -21,6 +21,8 @@ issueManagementUrl := Some(new URL("http://localhost:8080"))
 
 issueManagementProject := Some("SBTTesting")
 
+versionControlUrl := Some(new URL("http://localhost:8080"))
+
 libraryDependencies ++= Seq(
   Akka.Http.base,
   Akka.Http.core,

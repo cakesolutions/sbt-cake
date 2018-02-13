@@ -41,6 +41,7 @@ object ReleaseNotesPlugin extends AutoPlugin {
 
   /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
   override val projectSettings: Seq[Setting[_]] = Seq(
+    versionControlUrl := None,
     issueManagementUrl := None,
     issueManagementProject := None,
     issuePattern := """(\w+-\d+)""".r,
@@ -55,16 +56,25 @@ object ReleaseNotesPlugin extends AutoPlugin {
 
   private object Defaults {
     val checkReleaseNoteSettings: Def.Initialize[Task[Unit]] = Def.taskDyn {
-      require(
-        issueManagementUrl.value.nonEmpty,
-        "Need to define an issue management URL (e.g. to Jira) before we can " +
-          "publish release notes!"
-      )
-      require(
-        issueManagementProject.value.nonEmpty,
-        "Need to define an issue management (e.g. Jira) project before we " +
-          "can publish release notes!"
-      )
+      val logger = Keys.streams.value.log
+      if (issueManagementUrl.value.isEmpty) {
+        logger.info(
+          "No issue management (e.g. Jira) URL defined: " +
+            "skip publishing release notes to issue management system"
+        )
+      }
+      if (issueManagementProject.value.isEmpty) {
+        logger.info(
+          "No issue management (e.g. to Jira) project defined: " +
+            "skip publishing release notes to issue management system"
+        )
+      }
+      if (versionControlUrl.value.isEmpty) {
+        logger.info(
+          "No version control (e.g. Github) URL defined: " +
+            "skip publishing release notes to version control system"
+        )
+      }
 
       Def.task(())
     }
@@ -73,15 +83,12 @@ object ReleaseNotesPlugin extends AutoPlugin {
       val logger = Keys.streams.value.log
       if (isDynVerSnapshot.value) {
         logger.info(
-          "Skipping publishing of SNAPSHOT project " +
-            s"${issueManagementProject.value} release notes " +
-            s"for project ${name.value} to ${issueManagementUrl.value}"
+          s"Skipping publishing release notes of SNAPSHOT project ${name.value}"
         )
         Def.task(())
       } else {
         logger.info(
-          s"Publishing project ${issueManagementProject.value} release notes " +
-            s"for ${name.value} to ${issueManagementUrl.value}"
+          s"Publishing release notes of project ${name.value} ${version.value}"
         )
         val project = issueManagementProject.value.getOrElse("")
         val currentVersion = version.value
@@ -132,61 +139,118 @@ object ReleaseNotesPlugin extends AutoPlugin {
               )
           }
         }
-        val issues = {
+        val (issueNumbers, issues) = {
           val issueListCommand =
             s"""git log --pretty=oneline --pretty=format:"%s" $gitChanges"""
           val issueList =
             Try {
               issueListCommand.!!.split("\n").toList
                 .map(_.trim.replaceAll("\"", ""))
-                .flatMap(
-                  message =>
-                    issuePattern.value
-                      .findAllIn(message)
-                      .matchData
-                      .map(_.group(1))
-                )
             }
-
+          val issueNumberList = issueList.flatMap( messages =>
+            Try {
+              messages
+                .flatMap { message =>
+                  logger.info(s"- $message")
+                  issuePattern.value
+                    .findAllIn(message)
+                    .matchData
+                    .map(_.group(1))
+                }
+            }
+          )
           assume(
-            issueList.isSuccess,
+            issueNumberList.isSuccess,
             "Failed to extract version tag information for this release from " +
               "the git repository!"
           )
           assume(
-            issueList.get.nonEmpty,
+            issueNumberList.get.nonEmpty,
             "At least one version tag should exist in the git repository!"
           )
-
-          issueList.get
+          (issueNumberList.get, issueList.get)
         }
-        val result = for {
-          releaseId <- createJiraRelease(
-            version.value,
-            project,
-            issueManagementUrl.value
+        if (issueManagementUrl.value.isEmpty ||
+          issueManagementProject.value.isEmpty) {
+          logger.info(
+            "Skip publishing release notes to issue management system"
           )
-          _ = logger.info(s"Created release $releaseId")
-          _ <- associateIssuesWithJiraRelease(
-            version.value,
-            issues,
-            issueManagementUrl.value
-          )
-          _ = logger.info(s"Associating issues with release $releaseId")
-          _ <- closeJiraRelease(releaseId, project, issueManagementUrl.value)
-          _ = logger.info(s"Closed the release $releaseId")
-        } yield ()
+        } else {
+          val result = for {
+            releaseId <- createJiraRelease(
+              version.value,
+              project,
+              issueManagementUrl.value
+            )
+            _ = logger.info(s"Created release $releaseId")
+            _ <- associateIssuesWithJiraRelease(
+              version.value,
+              issueNumbers,
+              issueManagementUrl.value
+            )
+            _ = logger.info(s"Associating issues with release $releaseId")
+            _ <- closeJiraRelease(releaseId, project, issueManagementUrl.value)
+            _ = logger.info(s"Closed the release $releaseId")
+          } yield ()
 
-        if (result.isFailure) {
-          throw new AssertionError(s"Failed to publish release notes: $result")
+          if (result.isFailure) {
+            throw new AssertionError(
+              "Failed to publish release notes to " +
+                issueManagementUrl.value.getOrElse(""),
+              result.failed.get
+            )
+          }
+
+          logger.info(
+            "Completed publishing release notes to " +
+              issueManagementUrl.value.getOrElse("")
+          )
         }
+        if (versionControlUrl.value.isEmpty) {
+          logger.info(
+            "Skip publishing release notes to version control system"
+          )
+        } else {
+          val result = for {
+            _ <- createGithubRelease(
+              version.value,
+              issues,
+              versionControlUrl.value
+            )
+            _ = logger.info(s"Created release ${version.value}")
+          } yield ()
 
-        logger.info(
-          s"Completed publishing release notes to ${issueManagementUrl.value}"
-        )
+          if (result.isFailure) {
+            throw new AssertionError(
+              "Failed to publish release notes to " +
+                versionControlUrl.value.getOrElse(""),
+              result.failed.get
+            )
+          }
 
+          logger.info(
+            "Completed publishing release notes to " +
+              versionControlUrl.value.getOrElse("")
+          )
+        }
         Def.task(())
       }
+    }
+
+    private def jiraAuthHeader: Seq[String] = {
+      val jiraAuth = sys.env.get("JIRA_AUTH_TOKEN").map { token =>
+        BaseEncoding.base64().encode(token.getBytes(Charsets.UTF_8))
+      }
+      if (jiraAuth.isDefined) {
+        Seq("-H", s"Authorization: Basic ${jiraAuth.get}")
+      } else {
+        Seq.empty
+      }
+    }
+
+    private def githubAuthHeader: Seq[String] = {
+      val oAuth = sys.env.get("GITHUB_AUTH_TOKEN")
+      oAuth.toSeq.flatMap(token => Seq("-H", s"Authorization: token $token"))
     }
 
     // scalastyle:off magic.number
@@ -194,19 +258,12 @@ object ReleaseNotesPlugin extends AutoPlugin {
       method: String,
       path: String,
       json: String,
-      jiraUrl: Option[URL],
+      targetUrl: Option[URL],
+      authHeader: Seq[String],
       timeout: Int = 60
     ): Try[String] = {
-      val jiraUrlStr = jiraUrl.fold("")(_.toString)
-      val jiraAuth = sys.env.get("JIRA_AUTH_TOKEN").map { token =>
-        BaseEncoding.base64().encode(token.getBytes(Charsets.UTF_8))
-      }
-      val authenticationHeader =
-        if (jiraAuth.isDefined) {
-          Seq("-H", s"Authorization: Basic ${jiraAuth.get}")
-        } else {
-          Seq.empty
-        }
+      val targetUrlStr = targetUrl.fold("")(_.toString)
+
       val jsonData = json.replaceAll("\n", "")
       val requestCmd = Seq(
         "curl",
@@ -218,13 +275,13 @@ object ReleaseNotesPlugin extends AutoPlugin {
         "-d",
         jsonData
       ) ++
-        authenticationHeader ++
+        authHeader ++
         Seq(
           "-H",
           "Content-Type: application/json",
           "--max-time",
           timeout.toString,
-          s"$jiraUrlStr$path"
+          s"$targetUrlStr$path"
         )
 
       Try(requestCmd.!!.trim).flatMap { response =>
@@ -247,14 +304,14 @@ object ReleaseNotesPlugin extends AutoPlugin {
         } else if (statusCode.isFailure) {
           Failure(
             new RuntimeException(
-              s"$jiraUrlStr returned an unparsable status code of " +
+              s"$targetUrlStr returned an unparsable status code of " +
                 s"'$statusCodeStr': $responseBody"
             )
           )
         } else {
           Failure(
             new RuntimeException(
-              s"$jiraUrlStr returned an invalid status code of " +
+              s"$targetUrlStr returned an invalid status code of " +
                 s"$statusCode (expected 2XX): $responseBody"
             )
           )
@@ -267,17 +324,19 @@ object ReleaseNotesPlugin extends AutoPlugin {
     private def post(
       path: String,
       json: String,
-      jiraUrl: Option[URL]
+      targetUrl: Option[URL],
+      authHeader: Seq[String]
     ): Try[String] = {
-      httpClient("POST", path, json, jiraUrl)
+      httpClient("POST", path, json, targetUrl, authHeader)
     }
 
     private def put(
       path: String,
       json: String,
-      jiraUrl: Option[URL]
+      targetUrl: Option[URL],
+      authHeader: Seq[String]
     ): Try[String] = {
-      httpClient("PUT", path, json, jiraUrl)
+      httpClient("PUT", path, json, targetUrl, authHeader)
     }
 
     private def createJiraRelease(
@@ -301,7 +360,7 @@ object ReleaseNotesPlugin extends AutoPlugin {
           |}
         """.stripMargin
 
-      post("/version", data, jiraUrl)
+      post("/version", data, jiraUrl, jiraAuthHeader)
     }
 
     private def associateIssuesWithJiraRelease(
@@ -320,7 +379,7 @@ object ReleaseNotesPlugin extends AutoPlugin {
                |}
             """.stripMargin
 
-          put(s"/issue/$issue", data, jiraUrl).map(_ => ())
+          put(s"/issue/$issue", data, jiraUrl, jiraAuthHeader).map(_ => ())
         case (_, error) =>
           error
       }
@@ -340,7 +399,27 @@ object ReleaseNotesPlugin extends AutoPlugin {
           |}
         """.stripMargin
 
-      put(s"/version/$releaseId", data, jiraUrl).map(_ => ())
+      put(s"/version/$releaseId", data, jiraUrl, jiraAuthHeader).map(_ => ())
+    }
+
+    private def createGithubRelease(
+      version: String,
+      commits: List[String],
+      githubUrl: Option[URL]
+    ): Try[Unit] = {
+      val data =
+        s"""
+           |{
+           |  "tag_name": "v$version",
+           |  "target_commitish": "master",
+           |  "name": "v$version",
+           |  "body": "${commits.mkString("\\n")}",
+           |  "draft": false,
+           |  "prerelease": false
+           |}
+         """.stripMargin
+
+      post("/releases", data, githubUrl, githubAuthHeader).map(_ => ())
     }
   }
 }
@@ -352,8 +431,16 @@ object ReleaseNotesPlugin extends AutoPlugin {
 object ReleaseNotesPluginKeys {
 
   /**
-    * Optional URL pointing to the issue management REST APIs. This needs to be
-    * defined in order to use this plugin.
+    * Optional URL pointing to the version control REST APIs.
+    */
+  val versionControlUrl: SettingKey[Option[URL]] =
+    settingKey(
+      "Optional URL pointing to the issue management system (e.g. Jira) for " +
+        "the publishing of release notes"
+    )
+
+  /**
+    * Optional URL pointing to the issue management REST APIs.
     */
   val issueManagementUrl: SettingKey[Option[URL]] =
     settingKey(
@@ -363,7 +450,7 @@ object ReleaseNotesPluginKeys {
 
   /**
     * Optional project name. This is the name of the project within the issue
-    * management server. This needs to be defined in order to use this plugin.
+    * management server.
     */
   val issueManagementProject: SettingKey[Option[String]] =
     settingKey(
