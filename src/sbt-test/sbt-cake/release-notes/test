@@ -2,7 +2,7 @@
 > stage
 $ exec chmod a+x start-server.sh
 $ exec chmod a+x stop-server.sh
-> show startServer
+> startServer
 
 $ exec echo "TEST: work without a git project repository"
 $ exec echo "- expect SNAPSHOT release note publishing to be skipped"
