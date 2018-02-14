@@ -164,9 +164,8 @@ object ReleaseNotesPlugin extends AutoPlugin {
             "Failed to extract version tag information for this release from " +
               "the git repository!"
           )
-          assume(
-            issueNumberList.get.nonEmpty,
-            "At least one version tag should exist in the git repository!"
+          if (issueNumberList.get.isEmpty)(
+            logger.info("No traked issues found in this release")
           )
           (issueNumberList.get, issueList.get)
         }
