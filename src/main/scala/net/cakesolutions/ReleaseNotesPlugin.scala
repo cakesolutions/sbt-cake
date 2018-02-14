@@ -55,6 +55,7 @@ object ReleaseNotesPlugin extends AutoPlugin {
   )
 
   private object Defaults {
+
     val checkReleaseNoteSettings: Def.Initialize[Task[Unit]] = Def.taskDyn {
       val logger = Keys.streams.value.log
       if (issueManagementUrl.value.isEmpty) {
@@ -147,16 +148,17 @@ object ReleaseNotesPlugin extends AutoPlugin {
               issueListCommand.!!.split("\n").toList
                 .map(_.trim.replaceAll("\"", ""))
             }
-          val issueNumberList = issueList.flatMap( messages =>
-            Try {
-              messages
-                .flatMap { message =>
-                  logger.info(s"- $message")
-                  issuePattern.value
-                    .findAllIn(message)
-                    .matchData
-                    .map(_.group(1))
-                }
+          val issueNumberList = issueList.flatMap(
+            messages =>
+              Try {
+                messages
+                  .flatMap { message =>
+                    logger.info(s"- $message")
+                    issuePattern.value
+                      .findAllIn(message)
+                      .matchData
+                      .map(_.group(1))
+                  }
             }
           )
           assume(
@@ -170,7 +172,7 @@ object ReleaseNotesPlugin extends AutoPlugin {
           (issueNumberList.get, issueList.get)
         }
         if (issueManagementUrl.value.isEmpty ||
-          issueManagementProject.value.isEmpty) {
+            issueManagementProject.value.isEmpty) {
           logger.info(
             "Skip publishing release notes to issue management system"
           )

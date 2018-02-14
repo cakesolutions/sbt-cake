@@ -30,22 +30,30 @@ object CakeDynVerPlugin extends AutoPlugin {
     * set, eval, and .sbt files.
     */
   object autoImport {
+
     val dynVerPlugin: SettingKey[DynVerPluginData] =
       settingKey[DynVerPluginData]("")
+
     val dynVerPattern: SettingKey[DynVerPattern] =
       settingKey[DynVerPattern]("Dynamic versioning pattern configuration")
+
     val dynver: SettingKey[String] =
       settingKey[String]("The version of your project, from git")
+
     val dynverCurrentDate: SettingKey[Instant] =
       settingKey[Instant]("The current UTC time instant, for dynver purposes")
+
     val dynverGitDescribeOutput: SettingKey[Option[GitDescribeOutput]] =
       settingKey[Option[GitDescribeOutput]]("The output from git describe")
+
     val mkVersion: SettingKey[Option[GitDescribeOutput] => String] =
       settingKey[Option[GitDescribeOutput] => String](
         "Setting defining how to map git describe output to a version string"
       )
+
     val dynverCheckVersion: TaskKey[Boolean] =
       taskKey[Boolean]("Checks if version and dynver match")
+
     val dynverAssertVersion: TaskKey[Unit] =
       taskKey[Unit]("Asserts if version and dynver match")
   }
@@ -115,6 +123,7 @@ final case class DynVerPattern(
   * Default settings for dynamic versioning plugin's tag prefixing.
   */
 object DynVerPattern {
+
   val defaults: DynVerPattern = {
     val tagPrefix: String = "v"
     val Tag: Regex = s"""($tagPrefix[0-9][^+]*)""".r
