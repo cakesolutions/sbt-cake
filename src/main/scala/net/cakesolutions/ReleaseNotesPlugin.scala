@@ -406,13 +406,14 @@ object ReleaseNotesPlugin extends AutoPlugin {
       commits: List[String],
       githubUrl: Option[URL]
     ): Try[Unit] = {
+      val content = commits.map(m => s"- $m")
       val data =
         s"""
            |{
            |  "tag_name": "v$version",
            |  "target_commitish": "master",
-           |  "name": "v$version",
-           |  "body": "${commits.mkString("\\n")}",
+           |  "name": "$version",
+           |  "body": "${content.mkString("\\n")}",
            |  "draft": false,
            |  "prerelease": false
            |}
