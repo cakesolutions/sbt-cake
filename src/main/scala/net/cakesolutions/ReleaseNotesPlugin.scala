@@ -165,7 +165,7 @@ object ReleaseNotesPlugin extends AutoPlugin {
               "the git repository!"
           )
           if (issueNumberList.get.isEmpty)(
-            logger.info("No traked issues found in this release")
+            logger.info("No tracked issues found in this release")
           )
           (issueNumberList.get, issueList.get)
         }
