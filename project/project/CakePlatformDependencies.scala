@@ -25,14 +25,14 @@ object CakePlatformDependencies {
   val scalacheck: ModuleID = "org.scalacheck" %% "scalacheck" % "1.13.5"
   val scalaLogging: ModuleID =
     "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0"
-  val scalatest: ModuleID = "org.scalatest" %% "scalatest" % "3.0.3"
+  val scalatest: ModuleID = "org.scalatest" %% "scalatest" % "3.0.4"
   val shapeless: ModuleID = "com.chuusai" %% "shapeless" % "2.3.2"
   val swagger: ModuleID =
     "com.github.swagger-akka-http" %% "swagger-akka-http" % "0.9.1"
-  val typesafeConfig: ModuleID = "com.typesafe" % "config" % "1.3.1"
+  val typesafeConfig: ModuleID = "com.typesafe" % "config" % "1.3.2"
 
   object Akka {
-    val version = "2.5.3"
+    val version = "2.5.9"
 
     val actor: ModuleID = "com.typesafe.akka" %% "akka-actor" % version
     val chill: ModuleID = "com.twitter" %% "chill-akka" % "0.9.2"
@@ -43,14 +43,14 @@ object CakePlatformDependencies {
     val persistence: ModuleID =
       "com.typesafe.akka" %% "akka-persistence" % version
     val persistenceCassandra: ModuleID =
-      "com.typesafe.akka" %% "akka-persistence-cassandra" % "0.54"
+      "com.typesafe.akka" %% "akka-persistence-cassandra" % "0.58"
     val persistenceQuery: ModuleID =
       "com.typesafe.akka" %% "akka-persistence-query-experimental" % version
     val slf4j: ModuleID = "com.typesafe.akka" %% "akka-slf4j" % version
     val testkit: ModuleID = "com.typesafe.akka" %% "akka-testkit" % version
 
     object Http {
-      val version = "10.0.9"
+      val version = "10.0.11"
 
       val base: ModuleID = "com.typesafe.akka" %% "akka-http" % version
       val core: ModuleID = "com.typesafe.akka" %% "akka-http-core" % version
@@ -62,14 +62,14 @@ object CakePlatformDependencies {
   }
 
   object ApacheCommons {
-    val codec: ModuleID = "commons-codec" % "commons-codec" % "1.6"
-    val compress: ModuleID = "org.apache.commons" % "commons-compress" % "1.9"
-    val lang3: ModuleID = "org.apache.commons" % "commons-lang3" % "3.4"
-    val logging: ModuleID = "commons-logging" % "commons-logging" % "1.1.3"
+    val codec: ModuleID = "commons-codec" % "commons-codec" % "1.11"
+    val compress: ModuleID = "org.apache.commons" % "commons-compress" % "1.15"
+    val lang3: ModuleID = "org.apache.commons" % "commons-lang3" % "3.6"
+    val logging: ModuleID = "commons-logging" % "commons-logging" % "1.2"
   }
 
   object Gatling {
-    val version = "2.2.3"
+    val version = "2.3.0"
 
     val app: ModuleID = "io.gatling" % "gatling-app" % version
     val highcharts: ModuleID =
@@ -100,23 +100,23 @@ object CakePlatformDependencies {
   object SbtDependencies {
     val buildInfo: ModuleID = "com.eed3si9n" % "sbt-buildinfo" % "0.7.0"
     val digest: ModuleID = "com.typesafe.sbt" % "sbt-digest" % "1.1.3"
-    val dynver: ModuleID = "com.dwijnand" % "sbt-dynver" % "1.2.0"
-    val gatling: ModuleID = "io.gatling" % "gatling-sbt" % "2.2.1"
+    val dynver: ModuleID = "com.dwijnand" % "sbt-dynver" % "1.3.0"
+    val gatling: ModuleID = "io.gatling" % "gatling-sbt" % "2.2.2"
     val git: ModuleID = "com.typesafe.sbt" % "sbt-git" % "0.9.3"
     val gzip: ModuleID = "com.typesafe.sbt" % "sbt-gzip" % "1.0.2"
-    val header: ModuleID = "de.heikoseeberger" % "sbt-header" % "2.0.0"
+    val header: ModuleID = "de.heikoseeberger" % "sbt-header" % "3.0.2"
     val packager: ModuleID =
-      "com.typesafe.sbt" % "sbt-native-packager" % "1.2.2"
+      "com.typesafe.sbt" % "sbt-native-packager" % "1.3.1"
     val pgp: ModuleID = "com.jsuereth" % "sbt-pgp" % "1.0.1"
-    val scalafmt: ModuleID = "com.lucidchart" % "sbt-scalafmt-coursier" % "1.10"
+    val scalafmt: ModuleID = "com.lucidchart" % "sbt-scalafmt-coursier" % "1.15"
     val scalastyle: ModuleID =
-      "org.scalastyle" %% "scalastyle-sbt-plugin" % "0.8.0"
-    val scoverage: ModuleID = "org.scoverage" % "sbt-scoverage" % "1.5.0"
+      "org.scalastyle" %% "scalastyle-sbt-plugin" % "1.0.0"
+    val scoverage: ModuleID = "org.scoverage" % "sbt-scoverage" % "1.5.1"
     val sonatype: ModuleID = "org.xerial.sbt" % "sbt-sonatype" % "2.0"
-    val wartRemover: ModuleID = "org.wartremover" % "sbt-wartremover" % "2.1.0"
+    val wartRemover: ModuleID = "org.wartremover" % "sbt-wartremover" % "2.1.1"
 
     object Coursier {
-      val version = "1.0.0-RC10"
+      val version = "1.0.0"
 
       val sbt: ModuleID = "io.get-coursier" % "sbt-coursier" % version
       val cache: ModuleID = "io.get-coursier" %% "coursier-cache" % version

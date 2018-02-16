@@ -3,8 +3,8 @@
 
 package net.cakesolutions
 
-import sbt._
 import sbt.Keys._
+import sbt._
 
 /**
   * Cake recommended settings for Java application packaging.

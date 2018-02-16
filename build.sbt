@@ -3,21 +3,12 @@
 
 import de.heikoseeberger.sbtheader.FileType
 import de.heikoseeberger.sbtheader.HeaderPlugin.autoImport.HeaderFileType
+
 import net.cakesolutions.CakePlatformDependencies._
 
-// An SBT source generator is used to copy centralised library dependencies
-// into this build level
-sourceGenerators in Compile += Def.task {
-  val deps =
-    (baseDirectory in Compile).value /
-      "project" / "project" / "CakePlatformDependencies.scala"
-  val projectDeps =
-    (sourceManaged in Compile).value / "CakePlatformDependencies.scala"
-
-  IO.copyFile(deps, projectDeps)
-
-  Seq(projectDeps)
-}.taskValue
+// Copy centralised library dependencies into this build level
+unmanagedSources in Compile +=
+  baseDirectory.value / "project" / "project" / "CakePlatformDependencies.scala"
 
 organization := "net.cakesolutions"
 

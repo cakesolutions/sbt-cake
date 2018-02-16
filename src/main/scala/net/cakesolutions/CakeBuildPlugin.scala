@@ -11,8 +11,8 @@ import scala.util._
 
 import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport._
 import io.gatling.sbt.GatlingPlugin
-import sbt._
 import sbt.Keys._
+import sbt._
 import scoverage.ScoverageKeys._
 
 /**
@@ -47,7 +47,7 @@ object CakeBuildPlugin extends AutoPlugin {
   /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
   override val buildSettings: Seq[Setting[_]] = Seq(
     organization := "net.cakesolutions",
-    scalaVersion := "2.11.11",
+    scalaVersion := "2.12.4",
     maxErrors := 1,
     fork := true,
     cancelable := true,

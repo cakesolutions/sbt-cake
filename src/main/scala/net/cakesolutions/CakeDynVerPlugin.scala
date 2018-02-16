@@ -11,8 +11,8 @@ import java.time.format.DateTimeFormatter
 import scala.util._
 import scala.util.matching.Regex
 
-import sbt._
 import sbt.Keys._
+import sbt._
 
 /**
   * Dynamic versioning plugin
@@ -32,7 +32,9 @@ object CakeDynVerPlugin extends AutoPlugin {
   object autoImport {
 
     val dynVerPlugin: SettingKey[DynVerPluginData] =
-      settingKey[DynVerPluginData]("")
+      settingKey[DynVerPluginData](
+        "Core data and functions for dynamic versioning plugin"
+      )
 
     val dynVerPattern: SettingKey[DynVerPattern] =
       settingKey[DynVerPattern]("Dynamic versioning pattern configuration")

@@ -4,8 +4,8 @@
 package net.cakesolutions
 
 import io.gatling.sbt.GatlingKeys.GatlingIt
-import sbt._
 import sbt.Keys._
+import sbt._
 
 import net.cakesolutions.CakeDockerHealthKeys._
 import net.cakesolutions.CakeDockerPluginKeys.dockerRemove

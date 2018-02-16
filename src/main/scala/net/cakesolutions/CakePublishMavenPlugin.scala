@@ -8,8 +8,8 @@ package net.cakesolutions
 import scala.util.Try
 
 import org.apache.ivy.core.module.descriptor.MDArtifact
-import sbt._
 import sbt.Keys._
+import sbt._
 
 /**
   * Plugin for publishing artefacts (by default, configured for use by Cake

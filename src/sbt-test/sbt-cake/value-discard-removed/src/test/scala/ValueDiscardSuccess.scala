@@ -19,7 +19,7 @@ class ValueDiscardSuccess extends FreeSpec with Matchers {
       Future(42)
     }
 
-    assert(true)
+    assert(ignore.isInstanceOf[Unit])
   }
 
   "Testing with int value discarded and flagged" in {
@@ -27,7 +27,7 @@ class ValueDiscardSuccess extends FreeSpec with Matchers {
       Future(42)
     }
 
-    assert(true)
+    assert(ignore.isInstanceOf[Unit])
   }
 
   "Ensure multiple Scalatest matchers succeed" in {

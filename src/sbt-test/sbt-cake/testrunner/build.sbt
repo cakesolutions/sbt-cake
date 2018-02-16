@@ -19,8 +19,7 @@ val testrunner = (project in file("."))
     CakeTestRunnerPlugin)
   .settings(
     dependencyOverrides ++= Set(
-      "com.fasterxml.jackson.core" % "jackson-databind" % "2.8.7",
-      "com.typesafe.akka" % "akka-actor_2.11" % "2.4.19"
+      "com.typesafe.akka" %% "akka-actor" % "2.4.20"
     )
   )
   .settings(
