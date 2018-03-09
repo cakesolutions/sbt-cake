@@ -13,7 +13,6 @@ import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport._
 import io.gatling.sbt.GatlingPlugin
 import sbt.Keys._
 import sbt._
-import scoverage.ScoverageKeys._
 
 /**
   * Common plugin that sets up common variables and build settings such as:
@@ -73,7 +72,8 @@ object CakeBuildPlugin extends AutoPlugin {
   override val projectSettings: Seq[Setting[_]] = Seq(
     resolvers += Resolver.bintrayRepo("cakesolutions", "maven"),
     ivyLoggingLevel := UpdateLogging.Quiet,
-    conflictManager := ConflictManager.strict,
+    // BLOCKED: https://github.com/coursier/coursier/issues/349
+    // conflictManager := ConflictManager.strict,
     // makes it really easy to use a RAM disk - when the environment variable
     // exists, the SBT_VOLATILE_TARGET/target directory is created as a side
     // effect
@@ -113,12 +113,7 @@ object CakeBuildPlugin extends AutoPlugin {
       scalaOrganization.value % "scala-library" % scalaVersion.value,
       scalaOrganization.value % "scala-reflect" % scalaVersion.value,
       scalaOrganization.value % "scalap" % scalaVersion.value
-    ),
-    coverageMinimum := 80,
-    coverageFailOnMinimum := true,
-    coverageExcludedFiles := ".*/target/.*",
-    coverageExcludedPackages :=
-      "controllers.javascript*;controllers.ref*;router*"
+    )
   ) ++
     inConfig(Test)(sensibleTestSettings) ++
     inConfig(Compile)(sensibleCrossPath)
