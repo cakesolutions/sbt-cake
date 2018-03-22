@@ -168,7 +168,7 @@ object CakePublishMavenPlugin extends AutoPlugin {
         require(
           gitStatus.isSuccess && gitStatus.getOrElse("").isEmpty,
           s"Aborting release process for ${name.value}. Project should be a " +
-            "clean git repository."
+            s"clean git repository. Error output:\n$gitStatus"
         )
       }
 
