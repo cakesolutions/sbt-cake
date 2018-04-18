@@ -29,5 +29,5 @@ object MockServer extends App {
         }
       }
 
-  Http().bindAndHandle(routes, "localhost", 8080)
+  Http().bindAndHandle(routes, "0.0.0.0", 8080)
 }

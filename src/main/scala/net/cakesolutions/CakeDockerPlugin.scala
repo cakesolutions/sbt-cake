@@ -3,6 +3,8 @@
 
 package net.cakesolutions
 
+import scala.sys.process._
+
 import sbt.Keys._
 import sbt._
 
@@ -38,10 +40,10 @@ object CakeDockerPlugin extends AutoPlugin {
     dockerRepository :=
       sys.env
         .get("DOCKER_REPOSITORY")
-        .orElse(Some((name in ThisBuild).value)),
-    packageName in Docker := name.value,
-    maintainer in Docker := "Cake Solutions <devops@cakesolutions.net>",
-    version in Docker := sys.props.get("tag").getOrElse(version.value),
+        .orElse(Some((ThisBuild / name).value)),
+    Docker / packageName := name.value,
+    Docker / maintainer := "Cake Solutions <devops@cakesolutions.net>",
+    Docker / version := sys.props.get("tag").getOrElse(version.value),
     dockerCommands += {
       val dockerArgList =
         CakeBuildInfoKeys.generalInfo.value ++
@@ -65,7 +67,7 @@ object CakeDockerPlugin extends AutoPlugin {
   )
 
   private val dockerRemoveTask: Def.Initialize[Task[Unit]] = Def.task {
-    val image = (name in Docker).value
+    val image = (Docker / name).value
     val repository = dockerRepository.value match {
       case None =>
         image

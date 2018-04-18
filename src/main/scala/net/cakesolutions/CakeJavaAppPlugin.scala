@@ -27,8 +27,8 @@ object CakeJavaAppPlugin extends AutoPlugin {
     // TODO: CO-150: Remove CakeJavaAppPlugin bash script hack
     bashScriptExtraDefines +=
       """addJava "-Duser.dir=$(realpath "$(cd "${app_home}/.."; pwd -P)")"""",
-    mappings in Universal ++= {
-      val jar = (packageBin in Compile).value // forces compile
+    Universal / mappings ++= {
+      val jar = (Compile / packageBin).value // forces compile
       val src = sourceDirectory.value
       packageMapping((src / "main" / "resources") -> "conf")
         .withContents()

@@ -12,23 +12,21 @@ object CakePlatformDependencies {
 
   // Update attempted to 3.10, required unclear additional properties
   // (cdc_raw_directory)
-  val cassandraAll: ModuleID = "org.apache.cassandra" % "cassandra-all" % "3.7"
-  val guava: ModuleID = "com.google.guava" % "guava" % "19.0"
+  val cassandraAll: ModuleID = "org.apache.cassandra" % "cassandra-all" % "3.11.1"
+  val guava: ModuleID = "com.google.guava" % "guava" % "23.0"
   val httpClient: ModuleID =
-    "org.apache.httpcomponents" % "httpclient" % "4.3.6"
-  // TODO: CO-68: remove JSR305 dependency when SBT moves away from Scala 2.10
-  val jsr305: ModuleID = "com.google.code.findbugs" % "jsr305" % "3.0.2"
-  val levelDbJni: ModuleID = "org.fusesource.leveldbjni" % "leveldbjni" % "1.7"
+    "org.apache.httpcomponents" % "httpclient" % "4.5.5"
+  val levelDbJni: ModuleID = "org.fusesource.leveldbjni" % "leveldbjni" % "1.8"
   val logbackClassic: ModuleID = "ch.qos.logback" % "logback-classic" % "1.2.3"
   val netty3: ModuleID = "io.netty" % "netty" % "3.10.6.Final"
-  val quasiQuotes: ModuleID = "org.scalamacros" %% "quasiquotes" % "2.1.0"
+  val quasiQuotes: ModuleID = "org.scalamacros" %% "quasiquotes" % "2.1.1"
   val scalacheck: ModuleID = "org.scalacheck" %% "scalacheck" % "1.13.5"
   val scalaLogging: ModuleID =
-    "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0"
+    "com.typesafe.scala-logging" %% "scala-logging" % "3.7.2"
   val scalatest: ModuleID = "org.scalatest" %% "scalatest" % "3.0.4"
-  val shapeless: ModuleID = "com.chuusai" %% "shapeless" % "2.3.2"
+  val shapeless: ModuleID = "com.chuusai" %% "shapeless" % "2.3.3"
   val swagger: ModuleID =
-    "com.github.swagger-akka-http" %% "swagger-akka-http" % "0.9.1"
+    "com.github.swagger-akka-http" %% "swagger-akka-http" % "0.12.0"
   val typesafeConfig: ModuleID = "com.typesafe" % "config" % "1.3.2"
 
   object Akka {
@@ -43,10 +41,11 @@ object CakePlatformDependencies {
     val persistence: ModuleID =
       "com.typesafe.akka" %% "akka-persistence" % version
     val persistenceCassandra: ModuleID =
-      "com.typesafe.akka" %% "akka-persistence-cassandra" % "0.58"
+      "com.typesafe.akka" %% "akka-persistence-cassandra" % "0.80"
     val persistenceQuery: ModuleID =
-      "com.typesafe.akka" %% "akka-persistence-query-experimental" % version
+        "com.typesafe.akka" %% "akka-persistence-query" % version
     val slf4j: ModuleID = "com.typesafe.akka" %% "akka-slf4j" % version
+    val stream: ModuleID = "com.typesafe.akka" %% "akka-stream" % version
     val testkit: ModuleID = "com.typesafe.akka" %% "akka-testkit" % version
 
     object Http {
@@ -64,7 +63,7 @@ object CakePlatformDependencies {
   object ApacheCommons {
     val codec: ModuleID = "commons-codec" % "commons-codec" % "1.11"
     val compress: ModuleID = "org.apache.commons" % "commons-compress" % "1.15"
-    val lang3: ModuleID = "org.apache.commons" % "commons-lang3" % "3.6"
+    val lang3: ModuleID = "org.apache.commons" % "commons-lang3" % "3.7"
     val logging: ModuleID = "commons-logging" % "commons-logging" % "1.2"
   }
 
@@ -79,7 +78,7 @@ object CakePlatformDependencies {
   }
 
   object Jackson {
-    val version = "2.8.7"
+    val version = "2.9.4"
 
     val databind: ModuleID =
       "com.fasterxml.jackson.core" % "jackson-databind" % version
@@ -88,7 +87,7 @@ object CakePlatformDependencies {
   }
 
   object Netty4 {
-    val version = "4.0.45.Final"
+    val version = "4.1.21.Final"
 
     val buffer: ModuleID = "io.netty" % "netty-buffer" % version
     val common: ModuleID = "io.netty" % "netty-common" % version
@@ -99,21 +98,21 @@ object CakePlatformDependencies {
 
   object SbtDependencies {
     val buildInfo: ModuleID = "com.eed3si9n" % "sbt-buildinfo" % "0.7.0"
-    val digest: ModuleID = "com.typesafe.sbt" % "sbt-digest" % "1.1.3"
-    val dynver: ModuleID = "com.dwijnand" % "sbt-dynver" % "1.3.0"
+    val digest: ModuleID = "com.typesafe.sbt" % "sbt-digest" % "1.1.4"
+    val dynver: ModuleID = "com.dwijnand" % "sbt-dynver" % "2.0.0"
     val gatling: ModuleID = "io.gatling" % "gatling-sbt" % "2.2.2"
     val git: ModuleID = "com.typesafe.sbt" % "sbt-git" % "0.9.3"
     val gzip: ModuleID = "com.typesafe.sbt" % "sbt-gzip" % "1.0.2"
-    val header: ModuleID = "de.heikoseeberger" % "sbt-header" % "3.0.2"
+    val header: ModuleID = "de.heikoseeberger" % "sbt-header" % "4.1.0"
     val packager: ModuleID =
-      "com.typesafe.sbt" % "sbt-native-packager" % "1.3.1"
-    val pgp: ModuleID = "com.jsuereth" % "sbt-pgp" % "1.0.1"
+      "com.typesafe.sbt" % "sbt-native-packager" % "1.3.2"
+    val pgp: ModuleID = "com.jsuereth" % "sbt-pgp" % "1.1.0"
     val scalafmt: ModuleID = "com.lucidchart" % "sbt-scalafmt-coursier" % "1.15"
     val scalastyle: ModuleID =
       "org.scalastyle" %% "scalastyle-sbt-plugin" % "1.0.0"
     val scoverage: ModuleID = "org.scoverage" % "sbt-scoverage" % "1.5.1"
-    val sonatype: ModuleID = "org.xerial.sbt" % "sbt-sonatype" % "2.0"
-    val wartRemover: ModuleID = "org.wartremover" % "sbt-wartremover" % "2.1.1"
+    val sonatype: ModuleID = "org.xerial.sbt" % "sbt-sonatype" % "2.1"
+    val wartRemover: ModuleID = "org.wartremover" %% "sbt-wartremover" % "2.2.1"
 
     object Coursier {
       val version = "1.0.0"
@@ -125,7 +124,7 @@ object CakePlatformDependencies {
   }
 
   object ScalaKafkaClient {
-    val version = "0.10.2.0"
+    val version = "1.0.0"
 
     val akka: ModuleID =
       "net.cakesolutions" %% "scala-kafka-client-akka" % version
@@ -144,7 +143,7 @@ object CakePlatformDependencies {
   }
 
   object Webjars {
-    val angular: ModuleID = "org.webjars.bower" % "angularjs" % "1.6.3"
+    val angular: ModuleID = "org.webjars.bower" % "angularjs" % "1.6.8"
     val angularLeaflet: ModuleID =
       "org.webjars.bower" % "angular-leaflet-directive" % "0.10.0"
     val angularSlider: ModuleID =

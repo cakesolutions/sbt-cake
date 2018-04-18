@@ -4,11 +4,7 @@ $ exec echo "- expect tests to pass"
 # Launch mock server
 > stage
 
-$ exec chmod a+x start-server.sh
-$ exec chmod a+x stop-server.sh
-
-$ exec echo "starting mock server"
-> startServer
+> test
 
 > checkExternalBuildTools
 
@@ -17,6 +13,3 @@ $ exec echo "starting mock server"
 
 $ exec echo "running performance tests"
 > performanceTests
-
-$ exec echo "stopping mock server"
-> stopServer

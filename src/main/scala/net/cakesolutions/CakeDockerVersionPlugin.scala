@@ -3,6 +3,8 @@
 
 package net.cakesolutions
 
+import scala.sys.process._
+
 import sbt._
 
 import net.cakesolutions.internal.Version

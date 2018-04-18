@@ -9,7 +9,8 @@ import scala.language.postfixOps
 
 class PerformanceTest extends Simulation {
 
-  val httpConf = http.baseURL("http://localhost:8080")
+  val hostname = sys.env.getOrElse("CI_HOST", "localhost")
+  val httpConf = http.baseURL(s"http://$hostname:8080")
 
   val readClients = scenario("Clients").exec(HealthCheck.refreshManyTimes)
 

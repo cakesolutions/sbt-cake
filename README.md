@@ -359,7 +359,7 @@ sbt createRelease
 ### Plugin Configuration
 
 Should it be necessary to authenticate against the publishing repository, then the `credentials` setting can be used to
-specify a file holding the authentication credentials. By default, the file `$HOME/.sbt/0.13/.credentials` is used (if
+specify a file holding the authentication credentials. By default, the file `$HOME/.sbt/1.0/.credentials` is used (if
 it exists).
 
 Settings for determining where artifacts will be published are as follows:

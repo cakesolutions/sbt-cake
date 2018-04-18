@@ -3,6 +3,8 @@
 
 package net.cakesolutions
 
+import scala.sys.process._
+
 import com.typesafe.sbt.SbtNativePackager._
 import sbt.Keys._
 import sbt._
@@ -112,7 +114,7 @@ object CakeDockerComposePlugin extends AutoPlugin {
   override val projectSettings: Seq[Setting[_]] = Seq(
     dockerComposeFiles := Seq(file("docker/docker-compose.yml")),
     dockerComposeEnvVars := Map(),
-    dockerComposeImageTask := (publishLocal in Docker).value,
+    dockerComposeImageTask := (Docker / publishLocal).value,
     dockerComposeConfigCheck := dockerComposeConfigCheckTask.value,
     dockerComposeUp := dockerComposeUpTask.value,
     dockerComposeUpLaunchStyle := "-d",

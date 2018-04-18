@@ -8,6 +8,7 @@ package net.cakesolutions
 import java.time.{Instant, ZoneId}
 import java.time.format.DateTimeFormatter
 
+import scala.sys.process._
 import scala.util._
 import scala.util.matching.Regex
 
@@ -312,9 +313,9 @@ trait OptGitDescribeOutputOps {
 
 private object NoProcessLogger extends ProcessLogger {
 
-  def info(s: => String): Unit = ()
+  def out(s: => String): Unit = ()
 
-  def error(s: => String): Unit = ()
+  def err(s: => String): Unit = ()
 
   def buffer[T](f: => T): T = f
 }

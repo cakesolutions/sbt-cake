@@ -1,28 +1,27 @@
 // Copyright: 2017 https://github.com/cakesolutions/sbt-cake/graphs
 // License: http://www.apache.org/licenses/LICENSE-2.0
 
-import de.heikoseeberger.sbtheader.FileType
+import de.heikoseeberger.sbtheader.{CommentStyle, FileType}
 import de.heikoseeberger.sbtheader.HeaderPlugin.autoImport.HeaderFileType
 
 import net.cakesolutions.CakePlatformDependencies._
 
 // Copy centralised library dependencies into this build level
-unmanagedSources in Compile +=
+Compile / unmanagedSources +=
   baseDirectory.value / "project" / "project" / "CakePlatformDependencies.scala"
 
 organization := "net.cakesolutions"
 
-// scalastyle:off magic.number
-
 name := "sbt-cake"
 sbtPlugin := true
 
+// scalastyle:off magic.number
 startYear := Some(2017)
 licenses :=
   Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
 headerLicense := Some(
   HeaderLicense.Custom(
-    """|Copyright: 2017 https://github.com/cakesolutions/sbt-cake/graphs
+    """|Copyright: 2017-2018 https://github.com/cakesolutions/sbt-cake/graphs
        |License: http://www.apache.org/licenses/LICENSE-2.0
        |""".stripMargin
   )
@@ -30,9 +29,9 @@ headerLicense := Some(
 headerMappings :=
   headerMappings.value ++
   Map(
-    FileType("sbt") -> HeaderCommentStyle.CppStyleLineComment,
-    HeaderFileType.java -> HeaderCommentStyle.CppStyleLineComment,
-    HeaderFileType.scala -> HeaderCommentStyle.CppStyleLineComment
+    FileType("sbt") -> CommentStyle.cppStyleLineComment,
+    HeaderFileType.java -> CommentStyle.cppStyleLineComment,
+    HeaderFileType.scala -> CommentStyle.cppStyleLineComment
   )
 
 ivyLoggingLevel := UpdateLogging.Quiet
@@ -56,11 +55,7 @@ addSbtPlugin(SbtDependencies.scalafmt)
 
 enablePlugins(ScalafmtPlugin)
 
-// TODO: CO-68: remove JSR305 dependency when SBT moves away from Scala 2.10
-libraryDependencies += jsr305 % "provided"
-
-dependencyOverrides ++= Set(
-  jsr305,
+dependencyOverrides ++= Seq(
   guava,
   typesafeConfig,
   SbtDependencies.Coursier.cache,
@@ -116,6 +111,5 @@ pomExtra := {
     </developers>
 }
 
-scriptedSettings
 scriptedBufferLog := false
 scriptedLaunchOpts := Seq("-Dplugin.version=" + version.value)

@@ -52,7 +52,7 @@ object CakeBuildPlugin extends AutoPlugin {
     cancelable := true,
     sourcesInBase := false,
     javaOptions +=
-      s"-Dcake.sbt.root=${(baseDirectory in ThisBuild).value.getCanonicalFile}",
+      s"-Dcake.sbt.root=${(ThisBuild / baseDirectory).value.getCanonicalFile}",
     // WORKAROUND DockerPlugin doesn't like '+', so we need to ensure both
     // version and dynver are transformed in the same way
     DynVer.dynver := DynVer.dynver.value.replace('+', '-'),
@@ -101,7 +101,7 @@ object CakeBuildPlugin extends AutoPlugin {
     //   "-Dlogback.configurationFile=" +
     //     s"${(baseDirectory in ThisBuild).value}/logback-main.xml",
     javaOptions ++= JavaSpecificFlags ++ Seq("-Xss2m", "-Dfile.encoding=UTF8"),
-    dependencyOverrides ++= Set(
+    dependencyOverrides ++= Seq(
       // scala-lang is always used during transitive ivy resolution (and
       // potentially thrown out...)
       "org.scala-lang" % "scala-compiler" % scalaVersion.value,
@@ -165,26 +165,26 @@ object CakeBuildKeys {
   def sensibleTestSettings: Seq[Def.Setting[_]] =
     sensibleCrossPath ++
       Seq(
-        parallelExecution in Test := true,
-        parallelExecution in IntegrationTest := false,
+        Test / parallelExecution := true,
+        IntegrationTest / parallelExecution := false,
         javaOptions ~= (_.filterNot(
           _.startsWith("-Dlogback.configurationFile")
         )),
         javaOptions += {
-          val baseDir = (baseDirectory in ThisBuild).value
+          val baseDir = (ThisBuild / baseDirectory).value
           val config = configuration.value
           s"-Dlogback.configurationFile=$baseDir/logback-$config.xml"
         },
-        testForkedParallel in Test := true,
-        testForkedParallel in IntegrationTest := false,
+        Test / testForkedParallel := true,
+        IntegrationTest / testForkedParallel := false,
         testGrouping := {
           val opts = ForkOptions(
-            bootJars = Nil,
             javaHome = javaHome.value,
-            connectInput = connectInput.value,
             outputStrategy = outputStrategy.value,
-            runJVMOptions = javaOptions.value,
-            workingDirectory = Some(baseDirectory.value),
+            bootJars = Vector.empty,
+            workingDirectory = Option(baseDirectory.value),
+            runJVMOptions = javaOptions.value.toVector,
+            connectInput = connectInput.value,
             envVars = envVars.value
           )
           definedTests.value.map { test =>
@@ -195,7 +195,7 @@ object CakeBuildKeys {
           if (sys.env.get("GC_LOGGING").isEmpty) {
             Nil
           } else {
-            val base = (baseDirectory in ThisBuild).value
+            val base = (ThisBuild / baseDirectory).value
             val config = configuration.value
             val n = name.value
             // subject to task evaluation

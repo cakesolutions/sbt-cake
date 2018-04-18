@@ -2,5 +2,5 @@
 
 pushd target/universal/stage
 ./bin/release-notes &
-echo $! >server.pid
+echo $! > server.pid
 popd

@@ -1,6 +1,8 @@
 // Copyright: 2017 https://github.com/cakesolutions/sbt-cake/graphs
 // License: http://www.apache.org/licenses/LICENSE-2.0
 
+import scala.sys.process._
+
 import net.cakesolutions.CakePlatformDependencies.{Gatling => GatlingModule, _}
 import net.cakesolutions.CakeBuildInfoKeys._
 import net.cakesolutions.CakeTestRunnerKeys._
@@ -16,16 +18,13 @@ val testrunner = (project in file("."))
     AshScriptPlugin,
     CakeBuildPlugin,
     CakeDockerPlugin,
-    CakeTestRunnerPlugin)
-  .settings(
-    dependencyOverrides ++= Set(
-      "com.typesafe.akka" %% "akka-actor" % "2.4.20"
-    )
+    CakeTestRunnerPlugin
   )
   .settings(
     libraryDependencies ++= Seq(
+      Akka.actor,
+      Akka.stream,
       Akka.Http.base,
-      Akka.Http.core,
       Akka.Http.sprayJson,
       Akka.Http.testkit % Test,
       GatlingModule.app,
@@ -34,7 +33,8 @@ val testrunner = (project in file("."))
       GatlingModule.http,
       Jackson.databind,
       Jackson.scala,
-      swagger
+      swagger,
+      scalatest % Test
     )
   )
   .settings(
@@ -49,22 +49,3 @@ externalBuildTools :=
 
 healthCheckIntervalInSeconds := 1
 healthCheckRetryCount := 10
-
-val nullLogger = new ProcessLogger {
-  def info(s: => String): Unit = ()
-  def error(s: => String): Unit = ()
-  def buffer[T](f: => T): T = f
-}
-
-// We use SBT build tasks to ensure that the mock server actually runs in a
-// separate process fork!
-
-val startServer = taskKey[Unit]("Start mock issue management server")
-startServer := {
-  Process("./start-server.sh").run(nullLogger)
-}
-
-val stopServer = taskKey[Unit]("Stop mock issue management server")
-stopServer := {
-  Process("./stop-server.sh").run(nullLogger)
-}

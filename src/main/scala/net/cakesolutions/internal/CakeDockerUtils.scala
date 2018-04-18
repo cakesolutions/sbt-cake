@@ -5,6 +5,7 @@ package net.cakesolutions
 
 package internal
 
+import scala.sys.process._
 import scala.util.{Failure, Success, Try}
 
 import sbt._
@@ -112,10 +113,10 @@ private[cakesolutions] object CakeDockerUtils {
 
     def buffer[T](f: => T): T = f
 
-    def error(s: => String): Unit =
+    def err(s: => String): Unit =
       IO.append(logFile, s"$s\n".getBytes("utf-8"))
 
-    def info(s: => String): Unit =
+    def out(s: => String): Unit =
       IO.append(logFile, s"$s\n".getBytes("utf-8"))
   }
 

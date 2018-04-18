@@ -6,6 +6,7 @@ package net.cakesolutions
 import java.time.{Clock, ZonedDateTime}
 import java.time.format.DateTimeFormatter
 
+import scala.sys.process._
 import scala.util.{Failure, Success, Try}
 
 import com.google.common.base.Charsets
@@ -126,7 +127,7 @@ object ReleaseNotesPlugin extends AutoPlugin {
               s"$lastTag...$currentTag"
             case _: List[String] =>
               throw new AssertionError(
-                "Impossible scenarion: multiple version tags found " +
+                "Impossible scenario: multiple version tags found " +
                   "- unable to generate release version notes!"
               )
           }
@@ -172,7 +173,10 @@ object ReleaseNotesPlugin extends AutoPlugin {
         } yield ()
 
         if (result.isFailure) {
-          throw new AssertionError(s"Failed to publish release notes: $result")
+          throw new AssertionError(
+            "Failed to publish release notes",
+            result.failed.get
+          )
         }
 
         logger.info(

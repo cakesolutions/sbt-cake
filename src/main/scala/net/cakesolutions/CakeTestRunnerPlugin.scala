@@ -51,7 +51,7 @@ object CakeTestRunnerPlugin extends AutoPlugin {
   )
 
   private def runIntegrationTests: Def.Initialize[Task[Unit]] = Def.taskDyn {
-    (test in IntegrationTest)
+    (IntegrationTest / test)
   }
 
   /**
@@ -59,7 +59,7 @@ object CakeTestRunnerPlugin extends AutoPlugin {
     * and GatlingIt (gatling integration test) settings.
     */
   private def runPerformanceTests: Def.Initialize[Task[Unit]] = Def.taskDyn {
-    (test in GatlingIt)
+    (GatlingIt / test)
   }
 
   // TODO: Need to check first, if `enableIntegrationTests` is set on project

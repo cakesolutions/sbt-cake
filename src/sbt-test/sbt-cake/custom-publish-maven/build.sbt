@@ -4,6 +4,7 @@
 import java.time.{Instant, ZoneId}
 import java.time.format.DateTimeFormatter
 
+import scala.sys.process._
 import scala.util.matching.Regex
 
 import complete.DefaultParsers._

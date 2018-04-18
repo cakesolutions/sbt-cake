@@ -57,5 +57,5 @@ object MockIssueManagementServer extends App {
         ctx.complete(Forbidden)
       }
 
-  Http().bindAndHandle(mockRoutes, "localhost", 8080)
+  Http().bindAndHandle(mockRoutes, "0.0.0.0", 8080)
 }

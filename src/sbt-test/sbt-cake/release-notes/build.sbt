@@ -3,6 +3,8 @@
 
 import java.net.URL
 
+import scala.sys.process._
+
 import net.cakesolutions.CakePlatformDependencies._
 import net.cakesolutions.CakePublishMavenPluginKeys._
 import net.cakesolutions.ReleaseNotesPluginKeys._
@@ -34,20 +36,24 @@ libraryDependencies ++= Seq(
 mainClass in Compile := Some("MockIssueManagementServer")
 
 val nullLogger = new ProcessLogger {
-  def info(s: => String): Unit = ()
-  def error(s: => String): Unit = ()
+  def out(s: => String): Unit = ()
+  def err(s: => String): Unit = ()
   def buffer[T](f: => T): T = f
 }
 
 // We use SBT build tasks to ensure that the mock server actually runs in a
 // separate process fork!
 
-val startServer = taskKey[Unit]("Start mock issue management server")
+lazy val startServer = taskKey[Unit]("Start mock issue management server")
 startServer := {
-  Process("./start-server.sh").run(nullLogger)
+  val log = streams.value.log
+  log.info("Starting mock issue management server ...")
+  "./start-server.sh".run(nullLogger)
 }
 
-val stopServer = taskKey[Unit]("Stop mock issue management server")
+lazy val stopServer = taskKey[Unit]("Stop mock issue management server")
 stopServer := {
-  Process("./stop-server.sh").run(nullLogger)
+  val log = streams.value.log
+  log.info("Stopping mock issue management server ...")
+  "./stop-server.sh".run(nullLogger)
 }

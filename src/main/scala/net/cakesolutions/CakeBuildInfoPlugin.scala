@@ -6,6 +6,7 @@ package net.cakesolutions
 import java.time.{Clock, ZonedDateTime}
 import java.time.format.DateTimeFormatter
 
+import scala.sys.process._
 import scala.util._
 
 import sbt.Keys._
@@ -46,7 +47,7 @@ object CakeBuildInfoPlugin extends AutoPlugin {
       BuildInfoKey.action("lastCommitSha")(gitCommitHash)
     ),
     buildInfoPackage :=
-      s"${organization.value}.${(name in ThisBuild).value}.build",
+      s"${organization.value}.${(ThisBuild / name).value}.build",
     buildInfoOptions += BuildInfoOption.BuildTime,
     buildInfoOptions += BuildInfoOption.ToJson,
     externalBuildTools := Seq(),
@@ -74,7 +75,7 @@ object CakeBuildInfoPlugin extends AutoPlugin {
           require(checkCmd.! == 0, errorMsg)
       }
     },
-    packageOptions in (Compile, packageBin) +=
+    Compile / packageBin / packageOptions +=
       Package.ManifestAttributes(generalInfo.value.toSeq: _*),
     projectRoot := {
       Try {

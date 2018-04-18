@@ -5,6 +5,7 @@
 // License: http://opensource.org/licenses/BSD-3-Clause
 package net.cakesolutions
 
+import scala.sys.process._
 import scala.util.Try
 
 import org.apache.ivy.core.module.descriptor.MDArtifact
@@ -32,12 +33,12 @@ object CakePublishMavenPlugin extends AutoPlugin {
   import autoImport._
 
   // Derived from https://github.com/scalacenter/sbt-release-early
-  private val stableDef = new sbt.TaskSequential {}
+  private val stableDef = new sbt.internal.TaskSequential {}
 
   /** @see http://www.scala-sbt.org/0.13/api/index.html#sbt.package */
   override val projectSettings: Seq[Setting[_]] = Seq(
     publishMavenStyle := true,
-    publishArtifact in Test := false,
+    Test / publishArtifact := false,
     pomIncludeRepository := { _ =>
       false
     },
@@ -61,8 +62,15 @@ object CakePublishMavenPlugin extends AutoPlugin {
 
     def addPublishingCredentials(): Setting[Task[Seq[Credentials]]] = {
       credentials ++= {
-        if ((Path.userHome / ".sbt" / "0.13" / ".credentials").exists()) {
-          Seq(Credentials(Path.userHome / ".sbt" / "0.13" / ".credentials"))
+        val shortSbtVersion =
+          sbtVersion.value.split("\\.").take(2).mkString(".")
+        if ((Path.userHome / ".sbt" / shortSbtVersion / ".credentials")
+              .exists()) {
+          Seq(
+            Credentials(
+              Path.userHome / ".sbt" / shortSbtVersion / ".credentials"
+            )
+          )
         } else {
           Nil
         }
@@ -70,11 +78,12 @@ object CakePublishMavenPlugin extends AutoPlugin {
     }
 
     // Working with resolvers rather than URLs simplifies plugin testing
-    def artifactPublishingUrl(): Setting[Option[Resolver]] = {
+    def artifactPublishingUrl(): Setting[Task[Option[Resolver]]] = {
       publishTo := {
+        val isDynVerSnapshotValue = isDynVerSnapshot.value
         if (noArtifactToPublish.value) {
           None
-        } else if (isDynVerSnapshot.value) {
+        } else if (isDynVerSnapshotValue) {
           snapshotRepositoryResolver.value
         } else {
           repositoryResolver.value
@@ -109,9 +118,12 @@ object CakePublishMavenPlugin extends AutoPlugin {
                       a.extension
                     )
                   val published =
-                    ivy.getSettings
-                      .getResolver(resolverName)
-                      .exists(ivyArtifact)
+                    resolverName.fold(false)(
+                      resolverName =>
+                        ivy.getSettings
+                          .getResolver(resolverName)
+                          .exists(ivyArtifact)
+                    )
 
                   if (published) {
                     logger.warn(
@@ -123,8 +135,11 @@ object CakePublishMavenPlugin extends AutoPlugin {
               }
           }
 
-        new PublishConfiguration(
-          ivyFile,
+        PublishConfiguration(
+          publishMavenStyle.booleanValue,
+          deliverIvyPattern,
+          Option(if (isSnapshot.value) "integration" else "release"),
+          Option(ivyConfigurations.value.map(c => ConfigRef(c.name)).toVector),
           resolverName,
           unpublished,
           checksums,

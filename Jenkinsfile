@@ -30,7 +30,14 @@ pipeline {
     stage('Test') {
       steps {
         ansiColor('xterm') {
-          sh "sbt scripted"
+          script {
+            // In CI environments, we use the eth0 or local-ipv4 address of the slave
+            // instead of localhost
+            def dockerip = sh(returnStdout: true, script:  $/wget http://169.254.169.254/latest/meta-data/local-ipv4 -qO-/$).trim()
+            withEnv(["CI_HOST=$dockerip"]) {
+              sh "sbt scripted"
+            }
+          }
         }
       }
     }
