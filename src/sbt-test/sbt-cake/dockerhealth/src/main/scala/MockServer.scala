@@ -11,7 +11,6 @@ import akka.stream.ActorMaterializer
 /**
   * Mock server - for use during SBT scripted plugin testing.
   */
-@SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.NonUnitStatements"))
 object MockServer extends App {
 
   private implicit val system = ActorSystem("MockServer")

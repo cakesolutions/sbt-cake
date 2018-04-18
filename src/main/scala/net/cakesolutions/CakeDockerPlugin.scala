@@ -9,7 +9,7 @@ import sbt.Keys._
 import sbt._
 
 /**
-  * Cake recommended settings for configuring linter and wartremover, along
+  * Cake recommended settings for configuring linter and scalafix, along
   * with a standard suite of compiler compatibility flags.
   */
 object CakeDockerPlugin extends AutoPlugin {

@@ -45,7 +45,7 @@ addSbtPlugin(SbtDependencies.gzip)
 addSbtPlugin(SbtDependencies.packager)
 addSbtPlugin(SbtDependencies.Coursier.sbt)
 addSbtPlugin(SbtDependencies.scoverage)
-addSbtPlugin(SbtDependencies.wartRemover)
+addSbtPlugin(SbtDependencies.scalafix)
 
 addSbtPlugin(SbtDependencies.gatling)
 

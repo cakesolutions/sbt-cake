@@ -20,5 +20,6 @@ addSbtPlugin(sonatype)
 // Scala style and formatting for this plugins code
 addSbtPlugin(scalastyle)
 addSbtPlugin(scalafmt)
+addSbtPlugin(scalafix)
 
 libraryDependencies += "org.scala-sbt" %% "scripted-plugin" % sbtVersion.value

@@ -17,7 +17,6 @@ import akka.stream.scaladsl.FileIO
   * All received endpoint data is written to a endpoint specific files in the
   * build target directory.
   */
-@SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.NonUnitStatements"))
 object MockIssueManagementServer extends App {
 
   private implicit val system = ActorSystem("MockIssueManagementServer")

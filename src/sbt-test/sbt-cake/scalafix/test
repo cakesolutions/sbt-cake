@@ -1,0 +1,8 @@
+$ exec echo "TEST: check syntax violating code fails scalafix check"
+$ exec echo "- expect test to fail"
+-> scalafixTest
+
+$ exec echo "TEST: check fixed code passes scalafix check"
+$ exec echo "- expect test to pass"
+> scalafix
+> scalafixTest

@@ -397,19 +397,19 @@ The following are internal SBT plugin tasks and are not normally expected to be 
   published
 * `checkForCleanRepository` - assertion based check to ensure that the current repository working tree is clean.
 
-## `CakeStandardsPlugin`: Scala Compiler Options, Linter, Wartremover and Scala Format
+## `CakeStandardsPlugin`: Scala Compiler Options, Linter, Scalafix and Scala Format
 
 Plugin requirements: `CakeBuildPlugin` and `DynVerPlugin`
 
 This plugin is auto-loaded if all requirements are loaded.
 
-Enabling this plugin in a project configures [wartremover](https://github.com/wartremover/wartremover), along with a
+Enabling this plugin in a project configures [scalafix](https://github.com/scalacenter/scalafix), along with a
 standard suite of compiler compatibility flags.
 
 ### Plugin Configuration
 
 Configuration of this plugin is not generally recommended. To aid local development::
-* [wartremover](https://github.com/wartremover/wartremover) logs issues as warnings and not errors (in CI environments
+* [scalafix](https://github.com/scalacenter/scalafix) logs issues as warnings and not errors (in CI environments
   these will be *errors*)
 * warnings are treated as warnings (in CI environments these will be *errors*).
 
@@ -420,7 +420,7 @@ further configuration information):
 addCompilerPlugin("org.psywerx.hairyfotr" %% "linter" % "0.1.17")
 ```
 Currently, [linter](https://github.com/HairyFotr/linter) is not enabled by default since there are reports of it not
-being maintained and conflicting with [wartremover](https://github.com/wartremover/wartremover).
+being maintained and conflicting with [scalafix](https://github.com/scalacenter/scalafix).
 
 ### SBT Tasks
 

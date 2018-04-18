@@ -9,7 +9,7 @@ import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin
 import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport._
 import sbt.Keys._
 import sbt._
-import wartremover._
+import scalafix.sbt.ScalafixPlugin.autoImport._
 
 // scalastyle:off magic.number
 
@@ -33,7 +33,8 @@ object CakeStandardsPlugin extends AutoPlugin {
   override val projectSettings: Seq[Setting[_]] =
     ScalafmtCorePlugin.projectSettings ++
       Seq(Compile, Test).flatMap(inConfig(_)(scalafmtSettings)) ++
-      wartRemoverSettings ++
+      scalafixSettings ++
+      sbtfixSettings ++
       customJavacOptions ++
       Seq(
         scalacOptions ++= commonScalacOptions ++ {
@@ -64,18 +65,6 @@ object CakeStandardsPlugin extends AutoPlugin {
     // some of those flags are not supported in doc
     javacOptions in doc ~= (_.filterNot(_.startsWith("-Xlint")))
   )
-
-  private lazy val wartRemoverSettings = {
-    // http://www.wartremover.org
-    val warts = Warts.unsafe ++
-      Seq(Wart.FinalCaseClass, Wart.ExplicitImplicitTypes)
-    Seq(
-      wartremoverErrors in (Compile, compile) := warts,
-      wartremoverWarnings in (Test, compile) := warts,
-      wartremoverWarnings in (IntegrationTest, compile) := warts,
-      wartremoverExcluded in Compile ++= (managedSources in Compile).value
-    )
-  }
 
   // See https://tpolecat.github.io/2017/04/25/scalac-flags.html
   private lazy val scalacOptionsFor212 = Seq(

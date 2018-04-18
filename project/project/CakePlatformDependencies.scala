@@ -107,12 +107,12 @@ object CakePlatformDependencies {
     val packager: ModuleID =
       "com.typesafe.sbt" % "sbt-native-packager" % "1.3.2"
     val pgp: ModuleID = "com.jsuereth" % "sbt-pgp" % "1.1.0"
+    val scalafix: ModuleID = "ch.epfl.scala" % "sbt-scalafix" % "0.5.10"
     val scalafmt: ModuleID = "com.lucidchart" % "sbt-scalafmt-coursier" % "1.15"
     val scalastyle: ModuleID =
       "org.scalastyle" %% "scalastyle-sbt-plugin" % "1.0.0"
     val scoverage: ModuleID = "org.scoverage" % "sbt-scoverage" % "1.5.1"
-    val sonatype: ModuleID = "org.xerial.sbt" % "sbt-sonatype" % "2.1"
-    val wartRemover: ModuleID = "org.wartremover" %% "sbt-wartremover" % "2.2.1"
+    val sonatype: ModuleID = "org.xerial.sbt" % "sbt-sonatype" % "2.0"
 
     object Coursier {
       val version = "1.0.0"
